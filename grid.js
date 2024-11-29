@@ -108,7 +108,7 @@ setInterval(gravity, 200);
 setInterval(humanMove, 2500);
 
 function humanMove() {
-    if (human.x != 0 && human.y >= gridSize - 2) {
+    if ((human.x != 0 && human.y >= gridSize - 2) || grid[human.y + 1][human.x] === 2) {
         grid[human.y][human.x] = 0
         grid[human.y + 1][human.x] = 0
         human.x = human.x + randInt(-4, 4);
@@ -119,12 +119,17 @@ function humanMove() {
 };
 
 function gravity() {
-    if (human.y < gridSize - 2) {
+    if (human.y < gridSize - 2 && grid[human.y + 1][human.x] != 2) {
         grid[human.y][human.x] = 0;
         grid[human.y + 1][human.x] = 0;
         human.y += 1;
-        grid[human.y][human.x] = 1;
-        grid[human.y + 1][human.x] = 1;
+        if (grid[human.y + 1][human.x] === 2) {
+            return;
+        }
+        else {
+            grid[human.y][human.x] = 1;
+            grid[human.y + 1][human.x] = 1;
+        }
         drawGrid();
     };
 };
