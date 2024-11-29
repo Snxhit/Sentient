@@ -1,0 +1,23 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #000000;
+}
+canvas {
+    border: 1px solid #bdbdbd;
+}
+#humanBrush {
+    align-items: end;
+    right: 12px;
+    top: 10px;
+    position: absolute;
+}
+#dirtBrush {
+    align-items: end;
+    right: 12px;
+    top: 40px;
+    position: absolute;
+}
