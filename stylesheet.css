@@ -6,18 +6,37 @@ body {
     margin: 0;
     background-color: #000000;
 }
-canvas {
-    border: 1px solid #bdbdbd;
+
+
+#gridCanvas {
+    color: black;
+    border: 1px solid #e0e0e0;
+}
+
+#toolsMenu {
+    width: 200px;
 }
 #humanBrush {
     align-items: end;
-    right: 12px;
+    right: 5px;
     top: 10px;
     position: absolute;
+    border-radius: 17px;
+    font-size: 25px;
 }
 #dirtBrush {
     align-items: end;
-    right: 12px;
-    top: 40px;
+    right: 5px;
+    top: 50px;
     position: absolute;
+    border-radius: 17px;
+    font-size: 25px;
+}
+#foodBrush {
+    align-items: end;
+    right: 5px;
+    top: 90px;
+    position: absolute;
+    border-radius: 17px;
+    font-size: 25px;
 }
