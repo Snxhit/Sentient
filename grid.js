@@ -10,6 +10,7 @@ Cell IDs ::-->
 
 const canvas = document.getElementById('gridCanvas');
 const ctx = canvas.getContext('2d');
+const dpr = window.devicePixelRatio || 1;
 
 // const cellSize = 15;
 const cellSize = 20;
@@ -17,8 +18,12 @@ const gridSizeX = Math.floor(window.innerWidth / cellSize) - 2;
 const gridSizeY = Math.floor(window.innerHeight / cellSize) - 2;
 
 
-canvas.width = gridSizeX * cellSize;
-canvas.height = gridSizeY * cellSize;
+canvas.width = gridSizeX * cellSize * dpr;
+canvas.height = gridSizeY * cellSize * dpr;
+canvas.style.width = `${gridSizeX * cellSize}px`
+canvas.style.height = `${gridSizeY * cellSize}px`
+
+ctx.scale(dpr, dpr)
 
 let humans = {}
 let human = {
@@ -31,8 +36,8 @@ const dirtBrush = document.getElementById("dirtBrush");
 let activeBrush = "humanBrush";
 
 
-const grid = Array.from({ length: gridSizeX }, () =>
-    Array(gridSizeY).fill(0)
+const grid = Array.from({ length: gridSizeY }, () =>
+    Array(gridSizeX).fill(0)
 );
 
 
