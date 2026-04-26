@@ -15,6 +15,7 @@ body
   border: 2px solid black;
   background: #300;
   box-shadow: 0 0 20px #000;
+  border-radius: 9px;
   position: relative;
 }
 
