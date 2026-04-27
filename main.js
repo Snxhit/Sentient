@@ -126,6 +126,9 @@ function render(params) {
       }
 
       ctx.fillRect(screenX, screenY, tileSize, tileSize);
+
+      ctx.strokeStyle = "#00000020";
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
     }
   }
 
@@ -142,8 +145,6 @@ function render(params) {
     );
   });
 
-  ctx.strokeStyle = "#00000020";
-  ctx.strokeRect(screenX, screenY, tileSize, tileSize);
 }
 
 function loop() {
