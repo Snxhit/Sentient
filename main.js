@@ -80,7 +80,8 @@ const humans = [
     onGround: false,
     width: 1,
     height: 2,
-    color: "#f5c6a5"
+    color: "#f5c6a5",
+    bcolor: "#c49e82"
   }
 ];
 
@@ -189,6 +190,8 @@ function render(params) {
       tileSize * h.width,
       tileSize * h.height
     );
+    ctx.strokeStyle = h.bcolor;
+    ctx.strokeRect(screenX, screenY, tileSize * h.width, tileSize * h.height);
   });
 
 }
