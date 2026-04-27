@@ -26,8 +26,10 @@ const grid = [];
 for (let y = 0; y < SIM_HEIGHT; y++) {
   const row = [];
   for (let x = 0; x < SIM_WIDTH; x++) {
+    const isGround = y > 60;
     row.push({
-      terrain: "grass",
+      terrain: isGround ? "dirt" : "air",
+      solid: isGround,
       resource: null
     })
   }
@@ -38,6 +40,9 @@ const humans = [
   {
     x: 10,
     y: 10,
+    vx: 0,
+    vy: 0,
+    onGround: false,
     width: 1,
     height: 2,
     color: "#f5c6a5"
@@ -58,7 +63,8 @@ window.addEventListener("keydown", (e) => {
     camera.x += camera.speed;
   }
 
-  //todo: clamp camera
+  camera.x = Math.max(0, Math.min(camera.x, SIM_WIDTH * TILE_SIZE - sim.width));
+  camera.y = Math.max(0, Math.min(camera.y, SIM_HEIGHT * TILE_SIZE - sim.height));
 });
 
 //todo: simulate human and stuff
@@ -80,9 +86,13 @@ function render(params) {
 
       const tile = grid[y][x];
 
-      ctx.fillStyle =  "#2e7d32";
-      ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+      if (tile.solid) {
+        ctx.fillStyle = "#6d4c41";
+      } else {
+        ctx.fillStyle = "#87ceeb";
+      }
 
+      ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
     }
   }
 
