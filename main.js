@@ -2,6 +2,7 @@ const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
 
 const container = document.getElementById("container");
+const tooltip = document.getElementById("tooltip");
 
 function resizeCanvas() {
   sim.width = container.clientWidth;
@@ -177,6 +178,20 @@ function render(params) {
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = 2;
     ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+
+    // tooltip stoof (its in render cuz ion wanna put it elsewhere)
+    tooltip.style.display = "block";
+
+    const rect = sim.getBoundingClientRect();
+
+    tooltip.style.left = rect.left + mouse.x + 5 + "px";
+    tooltip.style.top = rect.top + mouse.y + 5 + "px";
+
+    const t = hovered.tile;
+
+    tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+  } else {
+    tooltip.style.display = "none";
   }
 
   humans.forEach(h => {

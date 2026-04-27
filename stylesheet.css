@@ -25,3 +25,16 @@ body
   height: 100%;
   display: block;
 }
+
+#tooltip
+{
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+}
