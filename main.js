@@ -21,6 +21,41 @@ const camera = {
   speed: 20
 }
 
+const mouse = {
+  x: 0,
+  y: 0
+}
+
+sim.addEventListener("mousemove", (e) => {
+  const rect = sim.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+});
+
+function screenToWorld(mx, my) {
+  return {
+    x: (mx + camera.x) / tileSize,
+    y: (my + camera.y) / tileSize
+  }
+}
+
+function getHoveredTile() {
+  const world = screenToWorld(mouse.x, mouse.y);
+
+  const tx = Math.floor(world.x);
+  const ty = Math.floor(world.y);
+
+  if (tx < 0 || ty < 0 || tx >= SIM_WIDTH || ty >= SIM_HEIGHT) {
+    return null;
+  };
+
+  return {
+    x: tx,
+    y: ty,
+    tile: grid[ty][tx]
+  };
+}
+
 const grid = [];
 
 for (let y = 0; y < SIM_HEIGHT; y++) {
@@ -130,6 +165,17 @@ function render(params) {
       ctx.strokeStyle = "#00000020";
       ctx.strokeRect(screenX, screenY, tileSize, tileSize);
     }
+  }
+
+  const hovered = getHoveredTile();
+
+  if (hovered) {
+    const screenX = hovered.x * tileSize - camera.x;
+    const screenY = hovered.y * tileSize - camera.y;
+
+    ctx.strokeStyle = "yellow";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(screenX, screenY, tileSize, tileSize);
   }
 
   humans.forEach(h => {
