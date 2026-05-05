@@ -57,6 +57,15 @@ function getHoveredTile() {
   };
 }
 
+function getHumanTile(tx, ty) {
+  return humans.find(h =>
+    tx >= Math.floor(h.x) &&
+    tx < Math.floor(h.x + h.width) &&
+    ty >= Math.floor(h.y) &&
+    ty < Math.floor(h.y + h.height)
+  ) || null;
+}
+
 const grid = [];
 
 for (let y = 0; y < SIM_HEIGHT; y++) {
@@ -78,6 +87,8 @@ const humans = [
     y: 10,
     vx: 0,
     vy: 0,
+    health: 10,
+    satiety: 100,
     onGround: false,
     width: 1,
     height: 2,
@@ -144,6 +155,17 @@ function simulate() {
   const MAX_STEP = 0.25;
 
   humans.forEach(h => {
+    if (h.satiety > 0) {
+      h.satiety -= 4;
+    } else if (h.satiety <= 0) {
+      h.satiety = 0;
+      if (h.health > 0) {
+        h.health -= 1;
+      } else {
+        h.health = 0;
+      }
+    }
+
     h.vy += GRAVITY;
     if (h.vy > TERM_VEL) {
       h.vy = TERM_VEL;
@@ -169,6 +191,10 @@ function simulate() {
 
       h.y = nextY;
       remainingY -= step;
+    }
+
+    if (h.onGround) {
+      // movement logik here
     }
   });
 }
@@ -215,8 +241,13 @@ function render(params) {
     tooltip.style.top = rect.top + mouse.y + 5 + "px";
 
     const t = hovered.tile;
+    const h = getHumanTile(hovered.x, hovered.y);
 
-    tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+    if (h) {
+      tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
+    } else {
+      tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+    }
   } else {
     tooltip.style.display = "none";
   }
