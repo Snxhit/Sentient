@@ -119,11 +119,29 @@ function isSolid(x, y) {
   return grid[Math.floor(y)][Math.floor(x)].solid;
 }
 
+function collidesAt(x, y, width, height) {
+  const left = Math.floor(x);
+  const right = Math.floor(x + width - 1e-6);
+  const top = Math.floor(y);
+  const bottom = Math.floor(y + height - 1e-6);
+
+  for (let ty = top; ty <= bottom; ty++) {
+    for (let tx = left; tx <= right; tx++) {
+      if (isSolid(tx, ty)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 let lastTick = 0;
 const TICK_RATE = 300;
 function simulate() {
   const GRAVITY = 0.2;
   const TERM_VEL = 6;
+  const MAX_STEP = 0.25;
 
   humans.forEach(h => {
     h.vy += GRAVITY;
@@ -133,15 +151,24 @@ function simulate() {
 
     h.onGround = false;
 
-    h.y += h.vy;
+    let remainingY = h.vy;
 
-    for (let i = 0; i < h.width; i++) {
-      if (isSolid(h.x + i, h.y + h.height)) {
-        h.y = Math.floor(h.y + h.height) - h.height;
+    while (Math.abs(remainingY) > 0) {
+      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
+      const nextY = h.y + step;
+
+      if (collidesAt(h.x, nextY, h.width, h.height)) {
+        if (step > 0) {
+          const hitTileY = Math.floor(nextY + h.height - 1e-6);
+          h.y = hitTileY - h.height;
+          h.onGround = true;
+        }
         h.vy = 0;
-        h.onGround = true;
         break;
       }
+
+      h.y = nextY;
+      remainingY -= step;
     }
   });
 }
