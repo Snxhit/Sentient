@@ -7,10 +7,18 @@ const tooltip = document.getElementById("tooltip");
 function resizeCanvas() {
   sim.width = container.clientWidth;
   sim.height = container.clientHeight;
+  let brushPanel = document.getElementById("brushPanel");
+  brushPanel.style.top = `${window.innerHeight / 3}px`;
 }
 
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
+
+window.addEventListener("DOMContentLoaded", () => {
+  let brushPanel = document.getElementById("brushPanel");
+  brushPanel.style.top = `${9 * (window.innerHeight / 10)}px`;
+  brushPanel.style.left = `${window.innerWidth / 4}px`;
+});
 
 let tileSize = 20;
 const SIM_WIDTH = 100;
