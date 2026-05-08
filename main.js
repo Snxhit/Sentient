@@ -15,6 +15,7 @@ resizeCanvas();
 let tileSize = 20;
 const SIM_WIDTH = 100;
 const SIM_HEIGHT = 100;
+let activeBrush = "pointer";
 
 const camera = {
   x: 0,
@@ -26,6 +27,18 @@ const mouse = {
   x: 0,
   y: 0
 }
+
+sim.addEventListener("click", () => {
+  const hovered = getHoveredTile();
+
+  if (hovered) {
+    if (activeBrush == "pointer") {
+      console.log(hovered);
+    } else if (activeBrush == "food") {
+      grid[hovered.y][hovered.x].resource = "food";
+    };
+  };
+});
 
 sim.addEventListener("mousemove", (e) => {
   const rect = sim.getBoundingClientRect();
@@ -123,6 +136,14 @@ window.addEventListener("keydown", (e) => {
   camera.y = Math.max(0, Math.min(camera.y, SIM_HEIGHT * tileSize - sim.height));
 });
 
+document.getElementById("pointerBrush").addEventListener("click", () => {
+  activeBrush = "pointer";
+});
+
+document.getElementById("foodBrush").addEventListener("click", () => {
+  activeBrush = "food";
+});
+
 function isSolid(x, y) {
   if (x < 0 || y < 0 || x >= SIM_WIDTH || y >= SIM_HEIGHT) {
     return true;
@@ -215,6 +236,10 @@ function render(params) {
         ctx.fillStyle = "#87ceeb";
       }
 
+      if (tile.resource == "food") {
+        ctx.fillStyle = "#03bf03";
+      }
+
       ctx.fillRect(screenX, screenY, tileSize, tileSize);
 
       ctx.strokeStyle = "#00000020";
@@ -228,25 +253,33 @@ function render(params) {
     const screenX = hovered.x * tileSize - camera.x;
     const screenY = hovered.y * tileSize - camera.y;
 
-    ctx.strokeStyle = "yellow";
+    if (activeBrush == "pointer") {
+      ctx.strokeStyle = "yellow";
+    } else if (activeBrush == "food") {
+      ctx.strokeStyle = "green";
+    }
     ctx.lineWidth = 2;
     ctx.strokeRect(screenX, screenY, tileSize, tileSize);
 
     // tooltip stoof (its in render cuz ion wanna put it elsewhere)
-    tooltip.style.display = "block";
+    if (activeBrush == "pointer") {
+      tooltip.style.display = "block";
 
-    const rect = sim.getBoundingClientRect();
+      const rect = sim.getBoundingClientRect();
 
-    tooltip.style.left = rect.left + mouse.x + 5 + "px";
-    tooltip.style.top = rect.top + mouse.y + 5 + "px";
+      tooltip.style.left = rect.left + mouse.x + 5 + "px";
+      tooltip.style.top = rect.top + mouse.y + 5 + "px";
 
-    const t = hovered.tile;
-    const h = getHumanTile(hovered.x, hovered.y);
+      const t = hovered.tile;
+      const h = getHumanTile(hovered.x, hovered.y);
 
-    if (h) {
-      tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
+      if (h) {
+        tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
+      } else {
+        tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+      }
     } else {
-      tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+      tooltip.style.display = "none";
     }
   } else {
     tooltip.style.display = "none";
