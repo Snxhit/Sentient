@@ -124,7 +124,9 @@ window.addEventListener("keydown", (e) => {
     camera.x += camera.speed;
   }
   if (e.key === "o") {
-    tileSize *= 0.9;
+    if (SIM_WIDTH * tileSize * 0.9 >= window.innerWidth && SIM_HEIGHT * tileSize * 0.9 >= window.innerHeight) {
+      tileSize *= 0.9;
+    };
   }
   if (e.key === "p") {
     tileSize *= 1.1;
