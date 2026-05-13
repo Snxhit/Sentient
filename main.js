@@ -4,6 +4,10 @@ const ctx = sim.getContext("2d");
 const container = document.getElementById("container");
 const tooltip = document.getElementById("tooltip");
 
+document.addEventListener("DOMContentLoaded", () => {
+  sim.focus();
+});
+
 function resizeCanvas() {
   sim.width = container.clientWidth;
   sim.height = container.clientHeight;
