@@ -217,7 +217,16 @@ function simulate() {
     }
 
     if (h.onGround) {
-      // movement logik here
+      if (h.satiety <= -1) {
+        // loop through a certain radius of blocks or smth to search for food.
+      } else {
+        let r = Math.random();
+        if (r < 0.33) {
+          h.x += 1;
+        } else if (r >= 0.33 && r < 0.66) {
+          h.x -= 1;
+        }
+      }
     }
   });
 }
