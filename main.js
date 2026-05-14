@@ -251,7 +251,14 @@ function simulate() {
           h.moveTime = Math.floor(Math.random() * 10) + 5;
         }
 
-        h.x += h.moveDir;
+        let newX = h.x + h.moveDir;
+        if (!collidesAt(newX, h.y, h.width, h.height)) {
+          h.x += h.moveDir;
+        } else if (!collidesAt(newX, h.y - 1, h.width, h.height)) {
+          h.y -= 1;
+          h.x += h.moveDir;
+        }
+
         h.moveTime -= 1;
       }
     }
