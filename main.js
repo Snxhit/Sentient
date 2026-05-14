@@ -54,6 +54,11 @@ sim.addEventListener("click", () => {
       grid[hovered.y][hovered.x].resource = "food";
     } else if (activeBrush == "dirt") {
       grid[hovered.y][hovered.x].terrain = "dirt";
+      grid[hovered.y][hovered.x].solid = true;
+    } else if (activeBrush == "eraser") {
+      grid[hovered.y][hovered.x].terrain = "air";
+      grid[hovered.y][hovered.x].solid = false;
+      grid[hovered.y][hovered.x].resource = null;
     }
   };
 });
@@ -168,6 +173,10 @@ document.getElementById("foodBrush").addEventListener("click", () => {
 
 document.getElementById("dirtBrush").addEventListener("click", () => {
   activeBrush = "dirt";
+});
+
+document.getElementById("eraserBrush").addEventListener("click", () => {
+  activeBrush = "eraser";
 });
 
 function isSolid(x, y) {
@@ -312,6 +321,10 @@ function render(params) {
       ctx.strokeStyle = "yellow";
     } else if (activeBrush == "food") {
       ctx.strokeStyle = "green";
+    } else if (activeBrush == "dirt") {
+      ctx.strokeStyle = "#573a30";
+    } else if (activeBrush == "eraser") {
+      ctx.strokeStyle = "black";
     }
     ctx.lineWidth = 2;
     ctx.strokeRect(screenX, screenY, tileSize, tileSize);
