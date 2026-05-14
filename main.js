@@ -39,7 +39,7 @@ const mouse = {
 const heights = [];
 
 for (let x = 0; x < SIM_WIDTH; x++) {
-  const n = noise.GetNoise(x * 0.05, 0);
+  const n = noise.GetNoise(x * 0.20, 0);
   const h = Math.floor(70 + n * 20);
   heights.push(h);
 }
@@ -116,6 +116,8 @@ const humans = [
     y: 10,
     vx: 0,
     vy: 0,
+    moveDir: 0,
+    moveTime: 0,
     health: 10,
     satiety: 100,
     onGround: false,
@@ -236,12 +238,21 @@ function simulate() {
       if (h.satiety <= -1) {
         // loop through a certain radius of blocks or smth to search for food.
       } else {
-        let r = Math.random();
-        if (r < 0.33) {
-          h.x += 1;
-        } else if (r >= 0.33 && r < 0.66) {
-          h.x -= 1;
+        if (h.moveTime <= 0) {
+          let r = Math.random();
+          if (r < 0.33) {
+            h.moveDir = -1;
+          } else if (r < 0.66) {
+            h.moveDir = 1;
+          } else {
+            h.moveDir = 0;
+          }
+
+          h.moveTime = Math.floor(Math.random() * 10) + 5;
         }
+
+        h.x += h.moveDir;
+        h.moveTime -= 1;
       }
     }
   });
