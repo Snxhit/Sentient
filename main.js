@@ -1,3 +1,7 @@
+import FastNoiseLite from 'https://cdn.jsdelivr.net/npm/fastnoise-lite@1.1.1/FastNoiseLite.min.js';
+
+const noise = new FastNoiseLite();
+
 const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
 
@@ -30,6 +34,14 @@ const camera = {
 const mouse = {
   x: 0,
   y: 0
+}
+
+const heights = [];
+
+for (let x = 0; x < SIM_WIDTH; x++) {
+  const n = noise.GetNoise(x * 0.02, 0);
+  const h = Math.floor(30 + n * 20);
+  heights.push(h);
 }
 
 sim.addEventListener("click", () => {
@@ -88,7 +100,7 @@ const grid = [];
 for (let y = 0; y < SIM_HEIGHT; y++) {
   const row = [];
   for (let x = 0; x < SIM_WIDTH; x++) {
-    const isGround = y > 60;
+    const isGround = heights[x] <= y;
     row.push({
       terrain: isGround ? "dirt" : "air",
       solid: isGround,
