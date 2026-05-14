@@ -21,7 +21,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 let tileSize = 20;
-const SIM_WIDTH = 100;
+const SIM_WIDTH = 500;
 const SIM_HEIGHT = 100;
 let activeBrush = "pointer";
 
@@ -39,8 +39,8 @@ const mouse = {
 const heights = [];
 
 for (let x = 0; x < SIM_WIDTH; x++) {
-  const n = noise.GetNoise(x * 0.02, 0);
-  const h = Math.floor(30 + n * 20);
+  const n = noise.GetNoise(x * 0.05, 0);
+  const h = Math.floor(70 + n * 20);
   heights.push(h);
 }
 
