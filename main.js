@@ -52,7 +52,9 @@ sim.addEventListener("click", () => {
       console.log(hovered);
     } else if (activeBrush == "food") {
       grid[hovered.y][hovered.x].resource = "food";
-    };
+    } else if (activeBrush == "dirt") {
+      grid[hovered.y][hovered.x].terrain = "dirt";
+    }
   };
 });
 
@@ -164,6 +166,10 @@ document.getElementById("foodBrush").addEventListener("click", () => {
   activeBrush = "food";
 });
 
+document.getElementById("dirtBrush").addEventListener("click", () => {
+  activeBrush = "dirt";
+});
+
 function isSolid(x, y) {
   if (x < 0 || y < 0 || x >= SIM_WIDTH || y >= SIM_HEIGHT) {
     return true;
@@ -172,6 +178,10 @@ function isSolid(x, y) {
 }
 
 function collidesAt(x, y, width, height) {
+  // ts for world boundaries, need fix this, doesnt take width into account
+  if (x < 0) {
+    return true;
+  }
   const left = Math.floor(x);
   const right = Math.floor(x + width - 1e-6);
   const top = Math.floor(y);
