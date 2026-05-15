@@ -334,6 +334,11 @@ function simulate() {
           h.y -= 1;
           h.x += h.moveDir;
         }
+
+        if (newX == foodTarget.x) {
+          grid[foodTarget.y][foodTarget.x].resource = null;
+          h.satiety += 10;
+        }
       } else {
         if (h.moveTime <= 0) {
           let r = Math.random();
