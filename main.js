@@ -204,16 +204,25 @@ document.getElementById("humanBrush").addEventListener("click", () => {
 
 document.getElementById("pauseButton").addEventListener("click", () => {
   timeSetting = "paused";
+  document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+  document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+  document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
 });
 
 document.getElementById("playButton").addEventListener("click", () => {
   timeSetting = "normal";
   TICK_RATE = 300;
+  document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+  document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+  document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
 });
 
 document.getElementById("twoXButton").addEventListener("click", () => {
   timeSetting = "double";
   TICK_RATE = 150;
+  document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+  document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+  document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
 });
 
 function isSolid(x, y) {
