@@ -23,7 +23,9 @@ resizeCanvas();
 let tileSize = 20;
 const SIM_WIDTH = 500;
 const SIM_HEIGHT = 100;
+let TICK_RATE = 300;
 let activeBrush = "pointer";
+let timeSetting = "normal";
 
 const camera = {
   x: 0,
@@ -200,6 +202,20 @@ document.getElementById("humanBrush").addEventListener("click", () => {
   activeBrush = "human";
 });
 
+document.getElementById("pauseButton").addEventListener("click", () => {
+  timeSetting = "paused";
+});
+
+document.getElementById("playButton").addEventListener("click", () => {
+  timeSetting = "normal";
+  TICK_RATE = 300;
+});
+
+document.getElementById("twoXButton").addEventListener("click", () => {
+  timeSetting = "double";
+  TICK_RATE = 150;
+});
+
 function isSolid(x, y) {
   if (x < 0 || y < 0 || x >= SIM_WIDTH || y >= SIM_HEIGHT) {
     return true;
@@ -258,7 +274,6 @@ function findNearestFoodTile(originX, originY, smellRange) {
 }
 
 let lastTick = 0;
-const TICK_RATE = 300;
 function simulate() {
   const GRAVITY = 0.2;
   const TERM_VEL = 6;
@@ -465,7 +480,9 @@ function loop() {
   const now = Date.now();
 
   if (now - lastTick > TICK_RATE) {
-    simulate();
+    if (timeSetting != "paused") {
+      simulate();
+    }
     lastTick = now;
   }
 
