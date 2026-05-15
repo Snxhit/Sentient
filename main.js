@@ -59,6 +59,23 @@ sim.addEventListener("click", () => {
       grid[hovered.y][hovered.x].terrain = "air";
       grid[hovered.y][hovered.x].solid = false;
       grid[hovered.y][hovered.x].resource = null;
+    } else if (activeBrush == "human") {
+        humans.push(
+          {
+            x: hovered.x,
+            y: hovered.y,
+            vx: 0,
+            vy: 0,
+            moveDir: 0,
+            moveTime: 0,
+            health: 10,
+            satiety: 100,
+            onGround: false,
+            width: 1,
+            height: 2,
+            color: "#f5c6a5",
+            bcolor: "#c49e82"
+        });
     }
   };
 });
@@ -177,6 +194,10 @@ document.getElementById("dirtBrush").addEventListener("click", () => {
 
 document.getElementById("eraserBrush").addEventListener("click", () => {
   activeBrush = "eraser";
+});
+
+document.getElementById("humanBrush").addEventListener("click", () => {
+  activeBrush = "human";
 });
 
 function isSolid(x, y) {
@@ -317,17 +338,25 @@ function render(params) {
     const screenX = hovered.x * tileSize - camera.x;
     const screenY = hovered.y * tileSize - camera.y;
 
+    ctx.lineWidth = 2;
+
     if (activeBrush == "pointer") {
       ctx.strokeStyle = "yellow";
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
     } else if (activeBrush == "food") {
       ctx.strokeStyle = "green";
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
     } else if (activeBrush == "dirt") {
       ctx.strokeStyle = "#573a30";
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
     } else if (activeBrush == "eraser") {
       ctx.strokeStyle = "black";
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+    } else if (activeBrush == "human") {
+      ctx.strokeStyle = "#f5c6a5";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(screenX, screenY, tileSize, tileSize*2);
     }
-    ctx.lineWidth = 2;
-    ctx.strokeRect(screenX, screenY, tileSize, tileSize);
 
     // tooltip stoof (its in render cuz ion wanna put it elsewhere)
     if (activeBrush == "pointer") {
