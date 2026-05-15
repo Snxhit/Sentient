@@ -228,12 +228,42 @@ function collidesAt(x, y, width, height) {
   return false;
 }
 
+function findNearestFoodTile(originX, originY, smellRange) {
+  let closest = null;
+  let closestDistSq = Infinity;
+
+  const minX = Math.max(0, Math.floor(originX - smellRange));
+  const maxX = Math.min(SIM_WIDTH - 1, Math.floor(originX + smellRange));
+  const minY = Math.max(0, Math.floor(originY - smellRange));
+  const maxY = Math.min(SIM_HEIGHT - 1, Math.floor(originY + smellRange));
+
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      if (grid[y][x].resource !== "food") {
+        continue;
+      }
+
+      const dx = x - originX;
+      const dy = y - originY;
+      const distSq = dx * dx + dy * dy;
+
+      if (distSq <= smellRange * smellRange && distSq < closestDistSq) {
+        closest = { x, y };
+        closestDistSq = distSq;
+      }
+    }
+  }
+
+  return closest;
+}
+
 let lastTick = 0;
 const TICK_RATE = 300;
 function simulate() {
   const GRAVITY = 0.2;
   const TERM_VEL = 6;
   const MAX_STEP = 0.25;
+  const FOOD_SMELL_RANGE = 8;
 
   for (let y = SIM_HEIGHT - 1; y >= 0; y--) {
     for (let x = 0; x < SIM_WIDTH; x++) {
@@ -287,8 +317,23 @@ function simulate() {
     }
 
     if (h.onGround) {
-      if (h.satiety <= -1) {
-        // loop through a certain radius of blocks or smth to search for food.
+      const foodTarget = findNearestFoodTile(h.x, h.y, FOOD_SMELL_RANGE);
+
+      if (foodTarget) {
+        const dx = foodTarget.x - h.x;
+        if (Math.abs(dx) < 0.01) {
+          h.moveDir = 0;
+        } else {
+          h.moveDir = dx > 0 ? 1 : -1;
+        }
+
+        const newX = h.x + h.moveDir;
+        if (!collidesAt(newX, h.y, h.width, h.height)) {
+          h.x += h.moveDir;
+        } else if (!collidesAt(newX, h.y - 1, h.width, h.height)) {
+          h.y -= 1;
+          h.x += h.moveDir;
+        }
       } else {
         if (h.moveTime <= 0) {
           let r = Math.random();
