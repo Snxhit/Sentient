@@ -235,6 +235,18 @@ function simulate() {
   const TERM_VEL = 6;
   const MAX_STEP = 0.25;
 
+  for (let y = SIM_HEIGHT - 1; y >= 0; y--) {
+    for (let x = 0; x < SIM_WIDTH; x++) {
+      let cTile = grid[y][x];
+      if (cTile.resource == "food") {
+        if (grid[y+1][x].terrain != "dirt" && grid[y+1][x].resource != "food") {
+          grid[y][x].resource = null;
+          grid[y+1][x].resource = "food";
+        }
+      }
+    }
+  }
+
   humans.forEach(h => {
     if (h.satiety > 0) {
       h.satiety -= 4;
