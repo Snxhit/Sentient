@@ -136,6 +136,129 @@ for (let y = 0; y < SIM_HEIGHT; y++) {
   grid.push(row);
 }
 
+class Entity {
+  constructor(x, y, config = {}) {
+    this.x = x;
+    this.y = y;
+    this.vx = config.vx ?? 0;
+    this.vy = config.vy ?? 0;
+    this.moveDir = config.moveDir ?? 0;
+    this.moveTime = config.moveTime ?? 0;
+    this.onGround = config.onGround ?? false;
+    this.width = config.width ?? 1;
+    this.height = config.height ?? 1;
+    this.color = config.color ?? "#ffffff";
+    this.bcolor = config.bcolor ?? "#000000";
+    this.isAlive = true;
+  }
+  
+  simulate(dt) {}
+}
+
+class Human extends Entity {
+  constructor(x, y, config = {}) {
+    super(x, y, {
+      width: 1,
+      height: 2,
+      color: "#f5c6a5",
+      bcolor: "#c49e82",
+      ...config
+    });
+
+    this.health = config.health ?? 10;
+    this.satiety = config.satiety ?? 100;
+  }
+
+  simulate() {
+    if (this.satiety > 0) {
+      this.satiety -= 4;
+    } else if (this.satiety <= 0) {
+      this.satiety = 0;
+      if (this.health > 0) {
+        this.health -= 1;
+      } else {
+        this.health = 0;
+      }
+    }
+
+    this.vy += GRAVITY;
+    if (this.vy > TERM_VEL) {
+      this.vy = TERM_VEL;
+    }
+
+    this.onGround = false;
+
+    let remainingY = this.vy;
+
+    while (Math.abs(remainingY) > 0) {
+      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
+      const nextY = this.y + step;
+
+      if (collidesAt(this.x, nextY, this.width, this.height)) {
+        if (step > 0) {
+          const hitTileY = Math.floor(nextY + this.height - 1e-6);
+          this.y = hitTileY - this.height;
+          this.onGround = true;
+        }
+        this.vy = 0;
+        break;
+      }
+
+      this.y = nextY;
+      remainingY -= step;
+    }
+
+    if (this.onGround) {
+      const foodTarget = findNearestFoodTile(this.x, this.y, FOOD_SMELL_RANGE);
+
+      if (foodTarget) {
+        const dx = foodTarget.x - this.x;
+        if (Math.abs(dx) < 0.01) {
+          this.moveDir = 0;
+        } else {
+          this.moveDir = dx > 0 ? 1 : -1;
+        }
+
+        const newX = this.x + this.moveDir;
+        if (!collidesAt(newX, this.y, this.width, this.height)) {
+          this.x += this.moveDir;
+        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+          this.y -= 1;
+          this.x += this.moveDir;
+        }
+
+        if (newX == foodTarget.x) {
+          grid[foodTarget.y][foodTarget.x].resource = null;
+          this.satiety += 10;
+        }
+      } else {
+        if (this.moveTime <= 0) {
+          let r = Math.random();
+          if (r < 0.33) {
+            this.moveDir = -1;
+          } else if (r < 0.66) {
+            this.moveDir = 1;
+          } else {
+            this.moveDir = 0;
+          }
+
+          this.moveTime = Math.floor(Math.random() * 10) + 5;
+        }
+
+        let newX = this.x + this.moveDir;
+        if (!collidesAt(newX, this.y, this.width, this.height)) {
+          this.x += this.moveDir;
+        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+          this.y -= 1;
+          this.x += this.moveDir;
+        }
+
+        this.moveTime -= 1;
+      }
+    }
+  }
+}
+
 const humans = [
   {
     x: 10,
@@ -302,92 +425,6 @@ function simulate() {
   }
 
   humans.forEach(h => {
-    if (h.satiety > 0) {
-      h.satiety -= 4;
-    } else if (h.satiety <= 0) {
-      h.satiety = 0;
-      if (h.health > 0) {
-        h.health -= 1;
-      } else {
-        h.health = 0;
-      }
-    }
-
-    h.vy += GRAVITY;
-    if (h.vy > TERM_VEL) {
-      h.vy = TERM_VEL;
-    }
-
-    h.onGround = false;
-
-    let remainingY = h.vy;
-
-    while (Math.abs(remainingY) > 0) {
-      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
-      const nextY = h.y + step;
-
-      if (collidesAt(h.x, nextY, h.width, h.height)) {
-        if (step > 0) {
-          const hitTileY = Math.floor(nextY + h.height - 1e-6);
-          h.y = hitTileY - h.height;
-          h.onGround = true;
-        }
-        h.vy = 0;
-        break;
-      }
-
-      h.y = nextY;
-      remainingY -= step;
-    }
-
-    if (h.onGround) {
-      const foodTarget = findNearestFoodTile(h.x, h.y, FOOD_SMELL_RANGE);
-
-      if (foodTarget) {
-        const dx = foodTarget.x - h.x;
-        if (Math.abs(dx) < 0.01) {
-          h.moveDir = 0;
-        } else {
-          h.moveDir = dx > 0 ? 1 : -1;
-        }
-
-        const newX = h.x + h.moveDir;
-        if (!collidesAt(newX, h.y, h.width, h.height)) {
-          h.x += h.moveDir;
-        } else if (!collidesAt(newX, h.y - 1, h.width, h.height)) {
-          h.y -= 1;
-          h.x += h.moveDir;
-        }
-
-        if (newX == foodTarget.x) {
-          grid[foodTarget.y][foodTarget.x].resource = null;
-          h.satiety += 10;
-        }
-      } else {
-        if (h.moveTime <= 0) {
-          let r = Math.random();
-          if (r < 0.33) {
-            h.moveDir = -1;
-          } else if (r < 0.66) {
-            h.moveDir = 1;
-          } else {
-            h.moveDir = 0;
-          }
-
-          h.moveTime = Math.floor(Math.random() * 10) + 5;
-        }
-
-        let newX = h.x + h.moveDir;
-        if (!collidesAt(newX, h.y, h.width, h.height)) {
-          h.x += h.moveDir;
-        } else if (!collidesAt(newX, h.y - 1, h.width, h.height)) {
-          h.y -= 1;
-          h.x += h.moveDir;
-        }
-
-        h.moveTime -= 1;
-      }
-    }
   });
 }
 

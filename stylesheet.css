@@ -33,6 +33,7 @@ body
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 6px 10px;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   border-radius: 4px;
   pointer-events: none;
@@ -99,4 +100,9 @@ body
 .timeItem:hover
 {
   transform: scale(1.05) translate(0, -4px) rotate(-10deg);
+}
+
+#playButton
+{
+  background-color: rgba(255, 255, 255, 0.5);
 }
