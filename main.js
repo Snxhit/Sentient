@@ -62,22 +62,7 @@ sim.addEventListener("click", () => {
       grid[hovered.y][hovered.x].solid = false;
       grid[hovered.y][hovered.x].resource = null;
     } else if (activeBrush == "human") {
-        humans.push(
-          {
-            x: hovered.x,
-            y: hovered.y,
-            vx: 0,
-            vy: 0,
-            moveDir: 0,
-            moveTime: 0,
-            health: 10,
-            satiety: 100,
-            onGround: false,
-            width: 1,
-            height: 2,
-            color: "#f5c6a5",
-            bcolor: "#c49e82"
-        });
+      entityManager.spawn(new Human(hovered.x, hovered.y));
     }
   };
 });
@@ -113,7 +98,7 @@ function getHoveredTile() {
 }
 
 function getHumanTile(tx, ty) {
-  return humans.find(h =>
+  return entityManager.getEntitiesByType(Human).find(h =>
     tx >= Math.floor(h.x) &&
     tx < Math.floor(h.x + h.width) &&
     ty >= Math.floor(h.y) &&
@@ -180,6 +165,11 @@ class Human extends Entity {
         this.health = 0;
       }
     }
+
+    const GRAVITY = 0.2;
+    const TERM_VEL = 6;
+    const MAX_STEP = 0.25;
+    const FOOD_SMELL_RANGE = 8;
 
     this.vy += GRAVITY;
     if (this.vy > TERM_VEL) {
@@ -280,23 +270,9 @@ class EntityManager {
   }
 }
 
-const humans = [
-  {
-    x: 10,
-    y: 10,
-    vx: 0,
-    vy: 0,
-    moveDir: 0,
-    moveTime: 0,
-    health: 10,
-    satiety: 100,
-    onGround: false,
-    width: 1,
-    height: 2,
-    color: "#f5c6a5",
-    bcolor: "#c49e82"
-  }
-];
+const entityManager = new EntityManager();
+
+entityManager.spawn(new Human(10, 10))
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "w") {
@@ -428,10 +404,6 @@ function findNearestFoodTile(originX, originY, smellRange) {
 
 let lastTick = 0;
 function simulate() {
-  const GRAVITY = 0.2;
-  const TERM_VEL = 6;
-  const MAX_STEP = 0.25;
-  const FOOD_SMELL_RANGE = 8;
 
   for (let y = SIM_HEIGHT - 1; y >= 0; y--) {
     for (let x = 0; x < SIM_WIDTH; x++) {
@@ -445,7 +417,7 @@ function simulate() {
     }
   }
 
-  // use central entityManager instance & call simulate()
+  entityManager.simulate();
 }
 
 function render(params) {
@@ -525,7 +497,7 @@ function render(params) {
     tooltip.style.display = "none";
   }
 
-  humans.forEach(h => {
+  entityManager.getEntitiesByType(Human).forEach(h => {
     const screenX = h.x * tileSize - camera.x;
     const screenY = h.y * tileSize - camera.y;
 
