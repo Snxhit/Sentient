@@ -137,7 +137,9 @@ class Entity {
     this.isAlive = true;
   }
   
-  simulate(dt) {}
+  simulate() {
+
+  }
 }
 
 class Human extends Entity {
@@ -162,6 +164,7 @@ class Human extends Entity {
       if (this.health > 0) {
         this.health -= 1;
       } else {
+        this.isAlive = false;
         this.health = 0;
       }
     }
@@ -260,9 +263,18 @@ class EntityManager {
   }
 
   simulate() {
-    this.entities.forEach(e => {
+    for (let i = this.entities.length - 1; i >= 0; i--) {
+      const e = this.entities[i];
+
+      console.log(e);
+
+      if (!e.isAlive) {
+        this.entities.splice(i, 1);
+        continue;
+      }
+
       e.simulate();
-    });
+    }
   }
 
   getEntitiesByType(type) {
