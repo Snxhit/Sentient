@@ -259,6 +259,27 @@ class Human extends Entity {
   }
 }
 
+class EntityManager {
+  constructor() {
+    this.entities = [];
+  }
+
+  spawn(entityInstance) {
+    this.entities.push(entityInstance);
+    return entityInstance;
+  }
+
+  simulate() {
+    this.entities.forEach(e => {
+      e.simulate();
+    });
+  }
+
+  getEntitiesByType(type) {
+    return this.entities.filter(e => e instanceof type);
+  }
+}
+
 const humans = [
   {
     x: 10,
@@ -424,8 +445,7 @@ function simulate() {
     }
   }
 
-  humans.forEach(h => {
-  });
+  // use central entityManager instance & call simulate()
 }
 
 function render(params) {
