@@ -252,6 +252,116 @@ class Human extends Entity {
   }
 }
 
+class Cat extends Entity {
+  constructor(x, y, config = {}) {
+    super(x, y, {
+      width: 1,
+      height: 1,
+      color: "#e2d739",
+      bcolor: "#9d9528",
+      ...config
+    });
+
+    this.health = config.health ?? 5;
+    this.satiety = config.satiety ?? 100;
+  }
+
+  simulate() {
+    if (this.satiety > 0) {
+      this.satiety -= 4;
+    } else if (this.satiety <= 0) {
+      this.satiety = 0;
+      if (this.health > 0) {
+        this.health -= 1;
+      } else {
+        this.isAlive = false;
+        this.health = 0;
+      }
+    }
+
+    const GRAVITY = 0.2;
+    const TERM_VEL = 6;
+    const MAX_STEP = 0.25;
+    const FOOD_SMELL_RANGE = 8;
+
+    this.vy += GRAVITY;
+    if (this.vy > TERM_VEL) {
+      this.vy = TERM_VEL;
+    }
+
+    this.onGround = false;
+
+    let remainingY = this.vy;
+
+    while (Math.abs(remainingY) > 0) {
+      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
+      const nextY = this.y + step;
+
+      if (collidesAt(this.x, nextY, this.width, this.height)) {
+        if (step > 0) {
+          const hitTileY = Math.floor(nextY + this.height - 1e-6);
+          this.y = hitTileY - this.height;
+          this.onGround = true;
+        }
+        this.vy = 0;
+        break;
+      }
+
+      this.y = nextY;
+      remainingY -= step;
+    }
+
+    if (this.onGround) {
+      const foodTarget = findNearestFoodTile(this.x, this.y, FOOD_SMELL_RANGE);
+
+      if (foodTarget) {
+        const dx = foodTarget.x - this.x;
+        if (Math.abs(dx) < 0.01) {
+          this.moveDir = 0;
+        } else {
+          this.moveDir = dx > 0 ? 1 : -1;
+        }
+
+        const newX = this.x + this.moveDir;
+        if (!collidesAt(newX, this.y, this.width, this.height)) {
+          this.x += this.moveDir;
+        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+          this.y -= 1;
+          this.x += this.moveDir;
+        }
+
+        if (newX == foodTarget.x) {
+          grid[foodTarget.y][foodTarget.x].resource = null;
+          this.satiety += 10;
+        }
+      } else {
+        if (this.moveTime <= 0) {
+          let r = Math.random();
+          if (r < 0.33) {
+            this.moveDir = -1;
+          } else if (r < 0.66) {
+            this.moveDir = 1;
+          } else {
+            this.moveDir = 0;
+          }
+
+          this.moveTime = Math.floor(Math.random() * 10) + 5;
+        }
+
+        let newX = this.x + this.moveDir;
+        if (!collidesAt(newX, this.y, this.width, this.height)) {
+          this.x += this.moveDir;
+        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+          this.y -= 1;
+          this.x += this.moveDir;
+        }
+
+        this.moveTime -= 1;
+      }
+    }
+  }
+}
+
 class EntityManager {
   constructor() {
     this.entities = [];
@@ -265,8 +375,6 @@ class EntityManager {
   simulate() {
     for (let i = this.entities.length - 1; i >= 0; i--) {
       const e = this.entities[i];
-
-      console.log(e);
 
       if (!e.isAlive) {
         this.entities.splice(i, 1);
@@ -284,7 +392,8 @@ class EntityManager {
 
 const entityManager = new EntityManager();
 
-entityManager.spawn(new Human(10, 10))
+entityManager.spawn(new Human(10, 10));
+entityManager.spawn(new Cat(20, 10));
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "w") {
@@ -509,19 +618,19 @@ function render(params) {
     tooltip.style.display = "none";
   }
 
-  entityManager.getEntitiesByType(Human).forEach(h => {
-    const screenX = h.x * tileSize - camera.x;
-    const screenY = h.y * tileSize - camera.y;
+  entityManager.entities.forEach(e => {
+    const screenX = e.x * tileSize - camera.x;
+    const screenY = e.y * tileSize - camera.y;
 
-    ctx.fillStyle = h.color;
+    ctx.fillStyle = e.color;
     ctx.fillRect(
       screenX,
       screenY,
-      tileSize * h.width,
-      tileSize * h.height
+      tileSize * e.width,
+      tileSize * e.height
     );
-    ctx.strokeStyle = h.bcolor;
-    ctx.strokeRect(screenX, screenY, tileSize * h.width, tileSize * h.height);
+    ctx.strokeStyle = e.bcolor;
+    ctx.strokeRect(screenX, screenY, tileSize * e.width, tileSize * e.height);
   });
 
 }
