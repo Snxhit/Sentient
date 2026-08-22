@@ -2,6 +2,7 @@ import CONFIG from "./core/config.js";
 
 import { generateTerrain } from "./world/terrain.js";
 import { World } from "./world/world.js";
+import { collidesAt } from "./world/collision.js";
 
 const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
@@ -166,7 +167,7 @@ class Human extends Entity {
       const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), CONFIG.physics.maxStep);
       const nextY = this.y + step;
 
-      if (collidesAt(this.x, nextY, this.width, this.height)) {
+      if (collidesAt(world, this.x, nextY, this.width, this.height)) {
         if (step > 0) {
           const hitTileY = Math.floor(nextY + this.height - 1e-6);
           this.y = hitTileY - this.height;
@@ -192,9 +193,9 @@ class Human extends Entity {
         }
 
         const newX = this.x + this.moveDir;
-        if (!collidesAt(newX, this.y, this.width, this.height)) {
+        if (!collidesAt(world, newX, this.y, this.width, this.height)) {
           this.x += this.moveDir;
-        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+        } else if (!collidesAt(world, newX, this.y - 1, this.width, this.height)) {
           this.y -= 1;
           this.x += this.moveDir;
         }
@@ -218,9 +219,9 @@ class Human extends Entity {
         }
 
         let newX = this.x + this.moveDir;
-        if (!collidesAt(newX, this.y, this.width, this.height)) {
+        if (!collidesAt(world, newX, this.y, this.width, this.height)) {
           this.x += this.moveDir;
-        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+        } else if (!collidesAt(world, newX, this.y - 1, this.width, this.height)) {
           this.y -= 1;
           this.x += this.moveDir;
         }
@@ -271,7 +272,7 @@ class Cat extends Entity {
       const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), CONFIG.physics.maxStep);
       const nextY = this.y + step;
 
-      if (collidesAt(this.x, nextY, this.width, this.height)) {
+      if (collidesAt(world, this.x, nextY, this.width, this.height)) {
         if (step > 0) {
           const hitTileY = Math.floor(nextY + this.height - 1e-6);
           this.y = hitTileY - this.height;
@@ -297,9 +298,9 @@ class Cat extends Entity {
         }
 
         const newX = this.x + this.moveDir;
-        if (!collidesAt(newX, this.y, this.width, this.height)) {
+        if (!collidesAt(world, newX, this.y, this.width, this.height)) {
           this.x += this.moveDir;
-        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+        } else if (!collidesAt(world, newX, this.y - 1, this.width, this.height)) {
           this.y -= 1;
           this.x += this.moveDir;
         }
@@ -323,9 +324,9 @@ class Cat extends Entity {
         }
 
         let newX = this.x + this.moveDir;
-        if (!collidesAt(newX, this.y, this.width, this.height)) {
+        if (!collidesAt(world, newX, this.y, this.width, this.height)) {
           this.x += this.moveDir;
-        } else if (!collidesAt(newX, this.y - 1, this.width, this.height)) {
+        } else if (!collidesAt(world, newX, this.y - 1, this.width, this.height)) {
           this.y -= 1;
           this.x += this.moveDir;
         }
@@ -467,34 +468,6 @@ document.getElementById("twoXButton").addEventListener("click", () => {
   document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
   document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
 });
-
-function isSolid(x, y) {
-  if (x < 0 || y < 0 || x >= CONFIG.world.width || y >= CONFIG.world.height) {
-    return true;
-  }
-  return world.getTile(Math.floor(x), Math.floor(y)).solid;
-}
-
-function collidesAt(x, y, width, height) {
-  // ts for world boundaries, need fix this, doesnt take width into account
-  if (x < 0) {
-    return true;
-  }
-  const left = Math.floor(x);
-  const right = Math.floor(x + width - 1e-6);
-  const top = Math.floor(y);
-  const bottom = Math.floor(y + height - 1e-6);
-
-  for (let ty = top; ty <= bottom; ty++) {
-    for (let tx = left; tx <= right; tx++) {
-      if (isSolid(tx, ty)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
 
 function findNearestFoodTile(originX, originY, smellRange) {
   let closest = null;
