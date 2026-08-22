@@ -1,7 +1,7 @@
-import FastNoiseLite from 'https://cdn.jsdelivr.net/npm/fastnoise-lite@1.1.1/FastNoiseLite.min.js';
 import CONFIG from "./core/config.js";
 
-const noise = new FastNoiseLite();
+import { generateTerrain } from "./world/terrain.js";
+import { World } from "./world/world.js";
 
 const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
@@ -42,14 +42,6 @@ const mouse = {
   y: 0
 }
 
-const heights = [];
-
-for (let x = 0; x < CONFIG.world.width; x++) {
-  const n = noise.GetNoise(x * 0.20, 0);
-  const h = Math.floor(70 + n * 20);
-  heights.push(h);
-}
-
 sim.addEventListener("click", () => {
   const hovered = getHoveredTile();
 
@@ -57,14 +49,14 @@ sim.addEventListener("click", () => {
     if (activeBrush == "pointer") {
       console.log(hovered);
     } else if (activeBrush == "food") {
-      grid[hovered.y][hovered.x].resource = "food";
+      world.getTile(hovered.x, hovered.y).resource = "food";
     } else if (activeBrush == "dirt") {
-      grid[hovered.y][hovered.x].terrain = "dirt";
-      grid[hovered.y][hovered.x].solid = true;
+      world.getTile(hovered.x, hovered.y).terrain = "dirt";
+      world.getTile(hovered.x, hovered.y).solid = true;
     } else if (activeBrush == "eraser") {
-      grid[hovered.y][hovered.x].terrain = "air";
-      grid[hovered.y][hovered.x].solid = false;
-      grid[hovered.y][hovered.x].resource = null;
+      world.getTile(hovered.x, hovered.y).terrain = "air";
+      world.getTile(hovered.x, hovered.y).solid = false;
+      world.getTile(hovered.x, hovered.y).resource = null;
     } else if (activeBrush == "human") {
       entityManager.spawn(new Human(hovered.x, hovered.y));
     }
@@ -84,11 +76,14 @@ function screenToWorld(mx, my) {
   }
 }
 
-function getHoveredTile() {
-  const world = screenToWorld(mouse.x, mouse.y);
+const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
+world.generate();
 
-  const tx = Math.floor(world.x);
-  const ty = Math.floor(world.y);
+function getHoveredTile() {
+  const worldCoords = screenToWorld(mouse.x, mouse.y);
+
+  const tx = Math.floor(worldCoords.x);
+  const ty = Math.floor(worldCoords.y);
 
   if (tx < 0 || ty < 0 || tx >= CONFIG.world.width || ty >= CONFIG.world.height) {
     return null;
@@ -97,7 +92,7 @@ function getHoveredTile() {
   return {
     x: tx,
     y: ty,
-    tile: grid[ty][tx]
+    tile: world.getTile(tx, ty)
   };
 }
 
@@ -108,21 +103,6 @@ function getHumanTile(tx, ty) {
     ty >= Math.floor(h.y) &&
     ty < Math.floor(h.y + h.height)
   ) || null;
-}
-
-const grid = [];
-
-for (let y = 0; y < CONFIG.world.height; y++) {
-  const row = [];
-  for (let x = 0; x < CONFIG.world.width; x++) {
-    const isGround = heights[x] <= y;
-    row.push({
-      terrain: isGround ? "dirt" : "air",
-      solid: isGround,
-      resource: null
-    })
-  }
-  grid.push(row);
 }
 
 class Entity {
@@ -220,7 +200,7 @@ class Human extends Entity {
         }
 
         if (newX == foodTarget.x) {
-          grid[foodTarget.y][foodTarget.x].resource = null;
+          world.getTile(foodTarget.x, foodTarget.y).resource = null;
           this.satiety += 10;
         }
       } else {
@@ -325,7 +305,7 @@ class Cat extends Entity {
         }
 
         if (newX == foodTarget.x) {
-          grid[foodTarget.y][foodTarget.x].resource = null;
+          world.getTile(foodTarget.x, foodTarget.y).resource = null;
           this.satiety += 10;
         }
       } else {
@@ -492,7 +472,7 @@ function isSolid(x, y) {
   if (x < 0 || y < 0 || x >= CONFIG.world.width || y >= CONFIG.world.height) {
     return true;
   }
-  return grid[Math.floor(y)][Math.floor(x)].solid;
+  return world.getTile(Math.floor(x), Math.floor(y)).solid;
 }
 
 function collidesAt(x, y, width, height) {
@@ -527,7 +507,7 @@ function findNearestFoodTile(originX, originY, smellRange) {
 
   for (let y = minY; y <= maxY; y++) {
     for (let x = minX; x <= maxX; x++) {
-      if (grid[y][x].resource !== "food") {
+      if (world.getTile(x, y).resource !== "food") {
         continue;
       }
 
@@ -548,13 +528,15 @@ function findNearestFoodTile(originX, originY, smellRange) {
 let lastTick = 0;
 function simulate() {
 
-  for (let y = CONFIG.world.height - 1; y >= 0; y--) {
-    for (let x = 0; x < CONFIG.world.width; x++) {
-      let cTile = grid[y][x];
-      if (cTile.resource == "food") {
-        if (grid[y+1][x].terrain != "dirt" && grid[y+1][x].resource != "food") {
-          grid[y][x].resource = null;
-          grid[y+1][x].resource = "food";
+  for (let y = world.height - 2; y >= 0; y--) {
+    for (let x = 0; x < world.width; x++) {
+      const current = world.getTile(x, y);
+      const below = world.getTile(x, y + 1);
+
+      if (current.resource === "food") {
+        if (below.terrain !== "dirt" && below.resource !== "food") {
+          current.resource = null;
+          below.resource = "food";
         }
       }
     }
@@ -566,12 +548,12 @@ function simulate() {
 function render() {
   ctx.clearRect(0, 0, sim.width, sim.height);
 
-  for (let y = 0; y < CONFIG.world.height; y++) {
-    for (let x = 0; x < CONFIG.world.width; x++) {
+  for (let y = 0; y < world.height; y++) {
+    for (let x = 0; x < world.width; x++) {
       const screenX = x * CONFIG.world.tileSize - camera.x;
-      const screenY = y * CONFIG.world.tileSize- camera.y;
+      const screenY = y * CONFIG.world.tileSize - camera.y;
 
-      const tile = grid[y][x];
+      const tile = world.getTile(x, y);
 
       if (tile.solid) {
         ctx.fillStyle = "#6d4c41";
