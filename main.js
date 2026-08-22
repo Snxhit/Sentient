@@ -1,4 +1,5 @@
 import FastNoiseLite from 'https://cdn.jsdelivr.net/npm/fastnoise-lite@1.1.1/FastNoiseLite.min.js';
+import CONFIG from "./core/config.js";
 
 const noise = new FastNoiseLite();
 
@@ -20,17 +21,20 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-let tileSize = 20;
-const SIM_WIDTH = 500;
-const SIM_HEIGHT = 100;
-let TICK_RATE = 300;
 let activeBrush = "pointer";
 let timeSetting = "normal";
 
 const camera = {
   x: 0,
   y: 0,
-  speed: 20
+  speed: 15
+}
+
+const keys = {
+  w: false,
+  s: false,
+  a: false,
+  d: false
 }
 
 const mouse = {
@@ -40,7 +44,7 @@ const mouse = {
 
 const heights = [];
 
-for (let x = 0; x < SIM_WIDTH; x++) {
+for (let x = 0; x < CONFIG.world.width; x++) {
   const n = noise.GetNoise(x * 0.20, 0);
   const h = Math.floor(70 + n * 20);
   heights.push(h);
@@ -75,8 +79,8 @@ sim.addEventListener("mousemove", (e) => {
 
 function screenToWorld(mx, my) {
   return {
-    x: (mx + camera.x) / tileSize,
-    y: (my + camera.y) / tileSize
+    x: (mx + camera.x) / CONFIG.world.tileSize,
+    y: (my + camera.y) / CONFIG.world.tileSize
   }
 }
 
@@ -86,7 +90,7 @@ function getHoveredTile() {
   const tx = Math.floor(world.x);
   const ty = Math.floor(world.y);
 
-  if (tx < 0 || ty < 0 || tx >= SIM_WIDTH || ty >= SIM_HEIGHT) {
+  if (tx < 0 || ty < 0 || tx >= CONFIG.world.width || ty >= CONFIG.world.height) {
     return null;
   };
 
@@ -108,9 +112,9 @@ function getHumanTile(tx, ty) {
 
 const grid = [];
 
-for (let y = 0; y < SIM_HEIGHT; y++) {
+for (let y = 0; y < CONFIG.world.height; y++) {
   const row = [];
-  for (let x = 0; x < SIM_WIDTH; x++) {
+  for (let x = 0; x < CONFIG.world.width; x++) {
     const isGround = heights[x] <= y;
     row.push({
       terrain: isGround ? "dirt" : "air",
@@ -169,14 +173,9 @@ class Human extends Entity {
       }
     }
 
-    const GRAVITY = 0.2;
-    const TERM_VEL = 6;
-    const MAX_STEP = 0.25;
-    const FOOD_SMELL_RANGE = 8;
-
-    this.vy += GRAVITY;
-    if (this.vy > TERM_VEL) {
-      this.vy = TERM_VEL;
+    this.vy += CONFIG.physics.gravity;
+    if (this.vy > CONFIG.physics.terminalVelocity) {
+      this.vy = CONFIG.physics.terminalVelocity;
     }
 
     this.onGround = false;
@@ -184,7 +183,7 @@ class Human extends Entity {
     let remainingY = this.vy;
 
     while (Math.abs(remainingY) > 0) {
-      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
+      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), CONFIG.physics.maxStep);
       const nextY = this.y + step;
 
       if (collidesAt(this.x, nextY, this.width, this.height)) {
@@ -202,7 +201,7 @@ class Human extends Entity {
     }
 
     if (this.onGround) {
-      const foodTarget = findNearestFoodTile(this.x, this.y, FOOD_SMELL_RANGE);
+      const foodTarget = findNearestFoodTile(this.x, this.y, CONFIG.entities.foodSmellRange);
 
       if (foodTarget) {
         const dx = foodTarget.x - this.x;
@@ -279,14 +278,9 @@ class Cat extends Entity {
       }
     }
 
-    const GRAVITY = 0.2;
-    const TERM_VEL = 6;
-    const MAX_STEP = 0.25;
-    const FOOD_SMELL_RANGE = 8;
-
-    this.vy += GRAVITY;
-    if (this.vy > TERM_VEL) {
-      this.vy = TERM_VEL;
+    this.vy += CONFIG.physics.gravity;
+    if (this.vy > CONFIG.physics.terminalVelocity) {
+      this.vy = CONFIG.physics.terminalVelocity;
     }
 
     this.onGround = false;
@@ -294,7 +288,7 @@ class Cat extends Entity {
     let remainingY = this.vy;
 
     while (Math.abs(remainingY) > 0) {
-      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), MAX_STEP);
+      const step = Math.sign(remainingY) * Math.min(Math.abs(remainingY), CONFIG.physics.maxStep);
       const nextY = this.y + step;
 
       if (collidesAt(this.x, nextY, this.width, this.height)) {
@@ -312,7 +306,7 @@ class Cat extends Entity {
     }
 
     if (this.onGround) {
-      const foodTarget = findNearestFoodTile(this.x, this.y, FOOD_SMELL_RANGE);
+      const foodTarget = findNearestFoodTile(this.x, this.y, CONFIG.entities.foodSmellRange);
 
       if (foodTarget) {
         const dx = foodTarget.x - this.x;
@@ -409,19 +403,47 @@ window.addEventListener("keydown", (e) => {
     camera.x += camera.speed;
   }
   if (e.key === "o") {
-    if (SIM_WIDTH * tileSize * 0.9 >= window.innerWidth && SIM_HEIGHT * tileSize * 0.9 >= window.innerHeight) {
-      tileSize *= 0.9;
+    if (CONFIG.world.width * CONFIG.world.tileSize * 0.9 >= window.innerWidth && CONFIG.world.height * CONFIG.world.tileSize * 0.9 >= window.innerHeight) {
+      CONFIG.world.tileSize *= 0.9;
     };
   }
   if (e.key === "p") {
-    tileSize *= 1.1;
+    CONFIG.world.tileSize *= 1.1;
   }
 
-  tileSize = Math.max(5, Math.min(tileSize, 60));
+  CONFIG.world.tileSize = Math.max(5, Math.min(CONFIG.world.tileSize, 60));
 
-  camera.x = Math.max(0, Math.min(camera.x, SIM_WIDTH * tileSize - sim.width));
-  camera.y = Math.max(0, Math.min(camera.y, SIM_HEIGHT * tileSize - sim.height));
+  camera.x = Math.max(0, Math.min(camera.x, CONFIG.world.width * CONFIG.world.tileSize - sim.width));
+  camera.y = Math.max(0, Math.min(camera.y, CONFIG.world.height * CONFIG.world.tileSize - sim.height));
 });
+
+window.addEventListener("keydown", (e) => {
+  if (e.key in keys) keys[e.key] = true;
+  if (e.key === "o") {
+    if (CONFIG.world.width * CONFIG.world.tileSize * 0.9 >= window.innerWidth && CONFIG.world.height * CONFIG.world.tileSize * 0.9 >= window.innerHeight) {
+      CONFIG.world.tileSize *= 0.9;
+    };
+  }
+  if (e.key === "p") {
+    CONFIG.world.tileSize *= 1.1;
+  }
+
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.key in keys) keys[e.key] = false;
+});
+
+function updateCamera() {
+  if (keys.w) camera.y -= camera.speed;
+  if (keys.s) camera.y += camera.speed;
+  if (keys.a) camera.x -= camera.speed;
+  if (keys.d) camera.x += camera.speed;
+  CONFIG.world.tileSize = Math.max(5, Math.min(CONFIG.world.tileSize, 60));
+
+  camera.x = Math.max(0, Math.min(camera.x, CONFIG.world.width * CONFIG.world.tileSize - sim.width));
+  camera.y = Math.max(0, Math.min(camera.y, CONFIG.world.height * CONFIG.world.tileSize - sim.height));
+}
 
 document.getElementById("pointerBrush").addEventListener("click", () => {
   activeBrush = "pointer";
@@ -452,7 +474,7 @@ document.getElementById("pauseButton").addEventListener("click", () => {
 
 document.getElementById("playButton").addEventListener("click", () => {
   timeSetting = "normal";
-  TICK_RATE = 300;
+  CONFIG.simulation.tickRate = 300;
   document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
   document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
   document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
@@ -460,14 +482,14 @@ document.getElementById("playButton").addEventListener("click", () => {
 
 document.getElementById("twoXButton").addEventListener("click", () => {
   timeSetting = "double";
-  TICK_RATE = 150;
+  CONFIG.simulation.tickRate = 150;
   document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
   document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
   document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
 });
 
 function isSolid(x, y) {
-  if (x < 0 || y < 0 || x >= SIM_WIDTH || y >= SIM_HEIGHT) {
+  if (x < 0 || y < 0 || x >= CONFIG.world.width || y >= CONFIG.world.height) {
     return true;
   }
   return grid[Math.floor(y)][Math.floor(x)].solid;
@@ -499,9 +521,9 @@ function findNearestFoodTile(originX, originY, smellRange) {
   let closestDistSq = Infinity;
 
   const minX = Math.max(0, Math.floor(originX - smellRange));
-  const maxX = Math.min(SIM_WIDTH - 1, Math.floor(originX + smellRange));
+  const maxX = Math.min(CONFIG.world.width - 1, Math.floor(originX + smellRange));
   const minY = Math.max(0, Math.floor(originY - smellRange));
-  const maxY = Math.min(SIM_HEIGHT - 1, Math.floor(originY + smellRange));
+  const maxY = Math.min(CONFIG.world.height - 1, Math.floor(originY + smellRange));
 
   for (let y = minY; y <= maxY; y++) {
     for (let x = minX; x <= maxX; x++) {
@@ -526,8 +548,8 @@ function findNearestFoodTile(originX, originY, smellRange) {
 let lastTick = 0;
 function simulate() {
 
-  for (let y = SIM_HEIGHT - 1; y >= 0; y--) {
-    for (let x = 0; x < SIM_WIDTH; x++) {
+  for (let y = CONFIG.world.height - 1; y >= 0; y--) {
+    for (let x = 0; x < CONFIG.world.width; x++) {
       let cTile = grid[y][x];
       if (cTile.resource == "food") {
         if (grid[y+1][x].terrain != "dirt" && grid[y+1][x].resource != "food") {
@@ -541,13 +563,13 @@ function simulate() {
   entityManager.simulate();
 }
 
-function render(params) {
+function render() {
   ctx.clearRect(0, 0, sim.width, sim.height);
 
-  for (let y = 0; y < SIM_HEIGHT; y++) {
-    for (let x = 0; x < SIM_WIDTH; x++) {
-      const screenX = x * tileSize - camera.x;
-      const screenY = y * tileSize - camera.y;
+  for (let y = 0; y < CONFIG.world.height; y++) {
+    for (let x = 0; x < CONFIG.world.width; x++) {
+      const screenX = x * CONFIG.world.tileSize - camera.x;
+      const screenY = y * CONFIG.world.tileSize- camera.y;
 
       const tile = grid[y][x];
 
@@ -561,37 +583,37 @@ function render(params) {
         ctx.fillStyle = "#03bf03";
       }
 
-      ctx.fillRect(screenX, screenY, tileSize, tileSize);
+      ctx.fillRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
 
       ctx.strokeStyle = "#00000020";
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     }
   }
 
   const hovered = getHoveredTile();
 
   if (hovered) {
-    const screenX = hovered.x * tileSize - camera.x;
-    const screenY = hovered.y * tileSize - camera.y;
+    const screenX = hovered.x * CONFIG.world.tileSize - camera.x;
+    const screenY = hovered.y * CONFIG.world.tileSize - camera.y;
 
     ctx.lineWidth = 2;
 
     if (activeBrush == "pointer") {
       ctx.strokeStyle = "yellow";
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "food") {
       ctx.strokeStyle = "green";
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "dirt") {
       ctx.strokeStyle = "#573a30";
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "eraser") {
       ctx.strokeStyle = "black";
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "human") {
       ctx.strokeStyle = "#f5c6a5";
       ctx.lineWidth = 2;
-      ctx.strokeRect(screenX, screenY, tileSize, tileSize*2);
+      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize * 2);
     }
 
     // tooltip stoof (its in render cuz ion wanna put it elsewhere)
@@ -619,18 +641,18 @@ function render(params) {
   }
 
   entityManager.entities.forEach(e => {
-    const screenX = e.x * tileSize - camera.x;
-    const screenY = e.y * tileSize - camera.y;
+    const screenX = e.x * CONFIG.world.tileSize - camera.x;
+    const screenY = e.y * CONFIG.world.tileSize - camera.y;
 
     ctx.fillStyle = e.color;
     ctx.fillRect(
       screenX,
       screenY,
-      tileSize * e.width,
-      tileSize * e.height
+      CONFIG.world.tileSize * e.width,
+      CONFIG.world.tileSize * e.height
     );
     ctx.strokeStyle = e.bcolor;
-    ctx.strokeRect(screenX, screenY, tileSize * e.width, tileSize * e.height);
+    ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize * e.width, CONFIG.world.tileSize * e.height);
   });
 
 }
@@ -638,7 +660,9 @@ function render(params) {
 function loop() {
   const now = Date.now();
 
-  if (now - lastTick > TICK_RATE) {
+  updateCamera();
+
+  if (now - lastTick > CONFIG.simulation.tickRate) {
     if (timeSetting != "paused") {
       simulate();
     }
