@@ -1,5 +1,8 @@
 import CONFIG from "./core/config.js";
 
+import { render } from "./render/renderer.js";
+import { getHoveredTile } from "./render/helpers.js";
+
 import { generateTerrain } from "./world/terrain.js";
 import { World } from "./world/world.js";
 import { collidesAt } from "./world/collision.js";
@@ -70,41 +73,8 @@ sim.addEventListener("mousemove", (e) => {
   mouse.y = e.clientY - rect.top;
 });
 
-function screenToWorld(mx, my) {
-  return {
-    x: (mx + camera.x) / CONFIG.world.tileSize,
-    y: (my + camera.y) / CONFIG.world.tileSize
-  }
-}
-
 const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
 world.generate();
-
-function getHoveredTile() {
-  const worldCoords = screenToWorld(mouse.x, mouse.y);
-
-  const tx = Math.floor(worldCoords.x);
-  const ty = Math.floor(worldCoords.y);
-
-  if (tx < 0 || ty < 0 || tx >= CONFIG.world.width || ty >= CONFIG.world.height) {
-    return null;
-  };
-
-  return {
-    x: tx,
-    y: ty,
-    tile: world.getTile(tx, ty)
-  };
-}
-
-function getHumanTile(tx, ty) {
-  return entityManager.getEntitiesByType(Human).find(h =>
-    tx >= Math.floor(h.x) &&
-    tx < Math.floor(h.x + h.width) &&
-    ty >= Math.floor(h.y) &&
-    ty < Math.floor(h.y + h.height)
-  ) || null;
-}
 
 class Entity {
   constructor(x, y, config = {}) {
@@ -122,9 +92,7 @@ class Entity {
     this.isAlive = true;
   }
   
-  simulate() {
-
-  }
+  simulate() {}
 }
 
 class Human extends Entity {
@@ -518,99 +486,7 @@ function simulate() {
   entityManager.simulate();
 }
 
-function render() {
-  ctx.clearRect(0, 0, sim.width, sim.height);
-
-  for (let y = 0; y < world.height; y++) {
-    for (let x = 0; x < world.width; x++) {
-      const screenX = x * CONFIG.world.tileSize - camera.x;
-      const screenY = y * CONFIG.world.tileSize - camera.y;
-
-      const tile = world.getTile(x, y);
-
-      if (tile.solid) {
-        ctx.fillStyle = "#6d4c41";
-      } else {
-        ctx.fillStyle = "#87ceeb";
-      }
-
-      if (tile.resource == "food") {
-        ctx.fillStyle = "#03bf03";
-      }
-
-      ctx.fillRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-
-      ctx.strokeStyle = "#00000020";
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-    }
-  }
-
-  const hovered = getHoveredTile();
-
-  if (hovered) {
-    const screenX = hovered.x * CONFIG.world.tileSize - camera.x;
-    const screenY = hovered.y * CONFIG.world.tileSize - camera.y;
-
-    ctx.lineWidth = 2;
-
-    if (activeBrush == "pointer") {
-      ctx.strokeStyle = "yellow";
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-    } else if (activeBrush == "food") {
-      ctx.strokeStyle = "green";
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-    } else if (activeBrush == "dirt") {
-      ctx.strokeStyle = "#573a30";
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-    } else if (activeBrush == "eraser") {
-      ctx.strokeStyle = "black";
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
-    } else if (activeBrush == "human") {
-      ctx.strokeStyle = "#f5c6a5";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize * 2);
-    }
-
-    // tooltip stoof (its in render cuz ion wanna put it elsewhere)
-    if (activeBrush == "pointer") {
-      tooltip.style.display = "block";
-
-      const rect = sim.getBoundingClientRect();
-
-      tooltip.style.left = rect.left + mouse.x + 5 + "px";
-      tooltip.style.top = rect.top + mouse.y + 5 + "px";
-
-      const t = hovered.tile;
-      const h = getHumanTile(hovered.x, hovered.y);
-
-      if (h) {
-        tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
-      } else {
-        tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
-      }
-    } else {
-      tooltip.style.display = "none";
-    }
-  } else {
-    tooltip.style.display = "none";
-  }
-
-  entityManager.entities.forEach(e => {
-    const screenX = e.x * CONFIG.world.tileSize - camera.x;
-    const screenY = e.y * CONFIG.world.tileSize - camera.y;
-
-    ctx.fillStyle = e.color;
-    ctx.fillRect(
-      screenX,
-      screenY,
-      CONFIG.world.tileSize * e.width,
-      CONFIG.world.tileSize * e.height
-    );
-    ctx.strokeStyle = e.bcolor;
-    ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize * e.width, CONFIG.world.tileSize * e.height);
-  });
-
-}
+render(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim);
 
 function loop() {
   const now = Date.now();
