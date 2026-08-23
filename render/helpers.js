@@ -1,3 +1,5 @@
+import { Human } from "../entities/human.js";
+
 export function getHoveredTile(world, mouse) {
   const worldCoords = screenToWorld(mouse.x, mouse.y);
 

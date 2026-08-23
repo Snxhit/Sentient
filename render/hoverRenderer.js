@@ -38,7 +38,6 @@ function renderBrushBorders(ctx, world, activeBrush, screenX, screenY) {
 }
 
 function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim) {
-    console.log(tooltip);
     if (activeBrush == "pointer") {
       tooltip.style.display = "block";
 
