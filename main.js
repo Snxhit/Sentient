@@ -51,7 +51,7 @@ const mouse = {
 }
 
 sim.addEventListener("click", () => {
-  const hovered = getHoveredTile();
+  const hovered = getHoveredTile(world, camera, mouse);
 
   if (hovered) {
     if (activeBrush == "pointer") {
