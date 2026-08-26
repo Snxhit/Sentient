@@ -3,6 +3,7 @@ import CONFIG from "./core/config.js";
 import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
 
+import { EntityManager } from "./entities/entityManager.js";
 import { Entity } from "./entities/entity.js";
 import { Human } from "./entities/human.js";
 import { Cat } from "./entities/cat.js";
@@ -81,33 +82,6 @@ const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain
 world.generate();
 
 
-class EntityManager {
-  constructor() {
-    this.entities = [];
-  }
-
-  spawn(entityInstance) {
-    this.entities.push(entityInstance);
-    return entityInstance;
-  }
-
-  simulate() {
-    for (let i = this.entities.length - 1; i >= 0; i--) {
-      const e = this.entities[i];
-
-      if (!e.isAlive) {
-        this.entities.splice(i, 1);
-        continue;
-      }
-
-      e.simulate(world);
-    }
-  }
-
-  getEntitiesByType(type) {
-    return this.entities.filter(e => e instanceof type);
-  }
-}
 
 const entityManager = new EntityManager();
 
