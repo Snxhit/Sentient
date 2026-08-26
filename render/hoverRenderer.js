@@ -1,7 +1,7 @@
 import { getHoveredTile, getHumanTile } from "./helpers.js";
 
 export function renderHover(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim) {
-  const hovered = getHoveredTile(world, mouse);
+  const hovered = getHoveredTile(world, camera, mouse);
 
   if (hovered) {
     const screenX = hovered.x * world.tileSize - camera.x;

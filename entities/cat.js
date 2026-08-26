@@ -1,7 +1,7 @@
 import { Entity } from "./entity.js";
 import { collidesAt } from "../world/collision.js";
 import CONFIG from "../core/config.js";
-
+import { findNearestFoodTile } from "../world/food.js";
 
 export class Cat extends Entity {
   constructor(x, y, config = {}) {
