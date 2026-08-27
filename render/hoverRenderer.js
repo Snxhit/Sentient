@@ -1,11 +1,12 @@
+import CONFIG from "../core/config.js";
 import { getHoveredTile, getHumanTile } from "./helpers.js";
 
 export function renderHover(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim) {
   const hovered = getHoveredTile(world, camera, mouse);
 
   if (hovered) {
-    const screenX = hovered.x * world.tileSize - camera.x;
-    const screenY = hovered.y * world.tileSize - camera.y;
+    const screenX = hovered.x * CONFIG.world.tileSize - camera.x;
+    const screenY = hovered.y * CONFIG.world.tileSize - camera.y;
 
     ctx.lineWidth = 2;
 
@@ -20,20 +21,20 @@ export function renderHover(ctx, world, entityManager, camera, mouse, activeBrus
 function renderBrushBorders(ctx, world, activeBrush, screenX, screenY) {
     if (activeBrush == "pointer") {
         ctx.strokeStyle = "yellow";
-        ctx.strokeRect(screenX, screenY, world.tileSize, world.tileSize);
+        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "food") {
         ctx.strokeStyle = "green";
-        ctx.strokeRect(screenX, screenY, world.tileSize, world.tileSize);
+        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "dirt") {
         ctx.strokeStyle = "#573a30";
-        ctx.strokeRect(screenX, screenY, world.tileSize, world.tileSize);
+        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "eraser") {
         ctx.strokeStyle = "black";
-        ctx.strokeRect(screenX, screenY, world.tileSize, world.tileSize);
+        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "human") {
         ctx.strokeStyle = "#f5c6a5";
         ctx.lineWidth = 2;
-        ctx.strokeRect(screenX, screenY, world.tileSize, world.tileSize * 2);
+        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize * 2);
     }
 }
 
