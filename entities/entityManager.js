@@ -1,6 +1,7 @@
 export class EntityManager {
-  constructor() {
+  constructor(world) {
     this.entities = [];
+    this.world = world;
   }
 
   spawn(entityInstance) {
@@ -17,7 +18,7 @@ export class EntityManager {
         continue;
       }
 
-      e.simulate(world);
+      e.simulate(this.world);
     }
   }
 

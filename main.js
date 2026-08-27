@@ -1,5 +1,8 @@
 import CONFIG from "./core/config.js";
 
+import { Keyboard } from "./input/keyboard.js";
+import { CameraSystem } from "./input/cameraSystem.js";
+
 import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
 
@@ -78,71 +81,16 @@ sim.addEventListener("mousemove", (e) => {
   mouse.y = e.clientY - rect.top;
 });
 
+const keyboard = new Keyboard();
+keyboard.init();
+const cameraSystem = new CameraSystem(camera, sim);
+
 const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
 world.generate();
 
-
-
-const entityManager = new EntityManager();
-
+const entityManager = new EntityManager(world);
 entityManager.spawn(new Human(10, 10));
 entityManager.spawn(new Cat(20, 10));
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "w") {
-    camera.y -= camera.speed;
-  }
-  if (e.key === "s") {
-    camera.y += camera.speed;
-  }
-  if (e.key === "a") {
-    camera.x -= camera.speed;
-  }
-  if (e.key === "d") {
-    camera.x += camera.speed;
-  }
-  if (e.key === "o") {
-    if (CONFIG.world.width * CONFIG.world.tileSize * 0.9 >= window.innerWidth && CONFIG.world.height * CONFIG.world.tileSize * 0.9 >= window.innerHeight) {
-      CONFIG.world.tileSize *= 0.9;
-    };
-  }
-  if (e.key === "p") {
-    CONFIG.world.tileSize *= 1.1;
-  }
-
-  CONFIG.world.tileSize = Math.max(5, Math.min(CONFIG.world.tileSize, 60));
-
-  camera.x = Math.max(0, Math.min(camera.x, CONFIG.world.width * CONFIG.world.tileSize - sim.width));
-  camera.y = Math.max(0, Math.min(camera.y, CONFIG.world.height * CONFIG.world.tileSize - sim.height));
-});
-
-window.addEventListener("keydown", (e) => {
-  if (e.key in keys) keys[e.key] = true;
-  if (e.key === "o") {
-    if (CONFIG.world.width * CONFIG.world.tileSize * 0.9 >= window.innerWidth && CONFIG.world.height * CONFIG.world.tileSize * 0.9 >= window.innerHeight) {
-      CONFIG.world.tileSize *= 0.9;
-    };
-  }
-  if (e.key === "p") {
-    CONFIG.world.tileSize *= 1.1;
-  }
-
-});
-
-window.addEventListener("keyup", (e) => {
-  if (e.key in keys) keys[e.key] = false;
-});
-
-function updateCamera() {
-  if (keys.w) camera.y -= camera.speed;
-  if (keys.s) camera.y += camera.speed;
-  if (keys.a) camera.x -= camera.speed;
-  if (keys.d) camera.x += camera.speed;
-  CONFIG.world.tileSize = Math.max(5, Math.min(CONFIG.world.tileSize, 60));
-
-  camera.x = Math.max(0, Math.min(camera.x, CONFIG.world.width * CONFIG.world.tileSize - sim.width));
-  camera.y = Math.max(0, Math.min(camera.y, CONFIG.world.height * CONFIG.world.tileSize - sim.height));
-}
 
 document.getElementById("pointerBrush").addEventListener("click", () => {
   activeBrush = "pointer";
@@ -211,7 +159,8 @@ function simulate() {
 function loop() {
   const now = Date.now();
 
-  updateCamera();
+  //updateCamera();
+  cameraSystem.move(keyboard.keys);
 
   if (now - lastTick > CONFIG.simulation.tickRate) {
     if (timeSetting != "paused") {
