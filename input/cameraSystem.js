@@ -1,5 +1,12 @@
 import CONFIG from "../core/config.js";
 
+export const camera = {
+  x: 0,
+  y: 0,
+  speed: 15
+}
+
+
 export class CameraSystem {
     constructor(camera, sim) {
         this.camera = camera;

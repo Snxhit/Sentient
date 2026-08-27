@@ -1,7 +1,8 @@
 import CONFIG from "./core/config.js";
 
 import { Keyboard } from "./input/keyboard.js";
-import { CameraSystem } from "./input/cameraSystem.js";
+import { camera, CameraSystem } from "./input/cameraSystem.js";
+import { mouse } from "./input/mouse.js";
 
 import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
@@ -35,24 +36,6 @@ resizeCanvas();
 
 let activeBrush = "pointer";
 let timeSetting = "normal";
-
-const camera = {
-  x: 0,
-  y: 0,
-  speed: 15
-}
-
-const keys = {
-  w: false,
-  s: false,
-  a: false,
-  d: false
-}
-
-const mouse = {
-  x: 0,
-  y: 0
-}
 
 sim.addEventListener("click", () => {
   const hovered = getHoveredTile(world, camera, mouse);
