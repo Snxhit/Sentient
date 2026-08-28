@@ -3,7 +3,7 @@ import CONFIG from "./core/config.js";
 
 import { Keyboard } from "./input/keyboard.js";
 import { camera, CameraSystem } from "./input/cameraSystem.js";
-import { mouse } from "./input/mouse.js";
+import { MouseManager } from "./input/mouseManager.js";
 
 import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
@@ -29,6 +29,9 @@ screenManager.init();
 
 const keyboard = new Keyboard();
 keyboard.init();
+const mouseManager = new MouseManager(sim);
+mouseManager.init();
+
 const cameraSystem = new CameraSystem(camera, sim);
 
 const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
@@ -58,13 +61,6 @@ sim.addEventListener("click", () => {
     }
   };
 });
-
-sim.addEventListener("mousemove", (e) => {
-  const rect = sim.getBoundingClientRect();
-  mouse.x = e.clientX - rect.left;
-  mouse.y = e.clientY - rect.top;
-});
-
 
 document.getElementById("pointerBrush").addEventListener("click", () => {
   activeBrush = "pointer";
