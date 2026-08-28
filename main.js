@@ -2,7 +2,7 @@ import ScreenManager from "./core/screenManager.js";
 import CONFIG from "./core/config.js";
 
 import { Keyboard } from "./input/keyboard.js";
-import { camera, CameraSystem } from "./input/cameraSystem.js";
+import { CameraSystem } from "./input/cameraSystem.js";
 import { MouseManager } from "./input/mouseManager.js";
 
 import { render } from "./render/renderer.js";
@@ -32,7 +32,7 @@ keyboard.init();
 const mouseManager = new MouseManager(sim);
 mouseManager.init();
 
-const cameraSystem = new CameraSystem(camera, sim);
+const cameraSystem = new CameraSystem(sim);
 
 const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
 world.generate();
@@ -42,7 +42,7 @@ entityManager.spawn(new Human(10, 10));
 entityManager.spawn(new Cat(20, 10));
 
 sim.addEventListener("click", () => {
-  const hovered = getHoveredTile(world, camera, mouse);
+  const hovered = getHoveredTile(world, cameraSystem.camera, mouseManager.coords);
 
   if (hovered) {
     if (activeBrush == "pointer") {
@@ -138,7 +138,7 @@ function loop() {
     lastTick = now;
   }
 
-  render(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim);
+  render(ctx, world, entityManager, cameraSystem.camera, mouseManager.coords, activeBrush, tooltip, sim);
   requestAnimationFrame(loop);
 }
 
