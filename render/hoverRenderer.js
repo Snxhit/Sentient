@@ -51,7 +51,9 @@ function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim)
       const result = entityManager.getEntitiesAtTile(hovered.x, hovered.y);
 
       if (result.hasEntities) {
-        tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
+        const pEntity = result.list[0];
+        const typeName = pEntity.constructor.name;
+        tooltip.innerHTML = `${typeName} at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${pEntity.health}<br>Satiety: ${pEntity.satiety}`;
       } else {
         tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
       }

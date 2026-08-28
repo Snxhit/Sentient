@@ -1,4 +1,3 @@
-import { Human } from "../entities/human.js";
 import CONFIG from "../core/config.js";
 
 export function getHoveredTile(world, camera, mouse) {
@@ -23,13 +22,4 @@ export function screenToWorld(camera, mx, my) {
     x: (mx + camera.x) / CONFIG.world.tileSize,
     y: (my + camera.y) / CONFIG.world.tileSize
   }
-}
-
-export function getHumanTile(tx, ty, entityManager) {
-  return entityManager.getEntitiesByType(Human).find(h =>
-    tx >= Math.floor(h.x) &&
-    tx < Math.floor(h.x + h.width) &&
-    ty >= Math.floor(h.y) &&
-    ty < Math.floor(h.y + h.height)
-  ) || null;
 }
