@@ -8,13 +8,11 @@ import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
 
 import { EntityManager } from "./entities/entityManager.js";
-import { Entity } from "./entities/entity.js";
 import { Human } from "./entities/human.js";
 import { Cat } from "./entities/cat.js";
 
 import { generateTerrain } from "./world/terrain.js";
 import { World } from "./world/world.js";
-import { collidesAt } from "./world/collision.js";
 
 const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
@@ -142,7 +140,6 @@ function simulate() {
 function loop() {
   const now = Date.now();
 
-  //updateCamera();
   cameraSystem.move(keyboard.keys);
 
   if (now - lastTick > CONFIG.simulation.tickRate) {
