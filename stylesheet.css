@@ -6,6 +6,7 @@ body
   overflow: hidden;
   height: 100vh;
   display: flex;
+  cursor: url('./public/cursors/CustomCursor-2.svg') 0 0, auto;
 }
 
 #container
@@ -53,6 +54,7 @@ body
   bottom: 20px;
   transform: translateX(-50%);
   border-radius: 8px;
+  cursor: url('./public/cursors/PanelCursor.svg') 0 0, auto;
 }
 
 .brushItem
@@ -64,6 +66,7 @@ body
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
+  cursor: url('./public/cursors/PanelCursor.svg') 0 0, auto;
 }
 
 .brushItem:hover

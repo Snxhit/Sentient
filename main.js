@@ -52,6 +52,9 @@ sim.addEventListener("click", () => {
     } else if (activeBrush == "dirt") {
       world.getTile(hovered.x, hovered.y).terrain = "dirt";
       world.getTile(hovered.x, hovered.y).solid = true;
+    } else if (activeBrush == "water") {
+      world.getTile(hovered.x, hovered.y).terrain = "water";
+      world.getTile(hovered.x, hovered.y).solid = true;
     } else if (activeBrush == "eraser") {
       world.getTile(hovered.x, hovered.y).terrain = "air";
       world.getTile(hovered.x, hovered.y).solid = false;
@@ -72,6 +75,10 @@ document.getElementById("foodBrush").addEventListener("click", () => {
 
 document.getElementById("dirtBrush").addEventListener("click", () => {
   activeBrush = "dirt";
+});
+
+document.getElementById("waterBrush").addEventListener("click", () => {
+  activeBrush = "water";
 });
 
 document.getElementById("eraserBrush").addEventListener("click", () => {

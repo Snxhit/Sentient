@@ -1,0 +1,8 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+	<defs>
+		<image width="32" height="32" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAABoUlEQVRYCcWWvy8EQRTH16+LhogQDa2aUujp/QHXo9eoFCp6IqGhJ1EoNArRCrWSTkVBIvh8xVxksnMzu7Nz85JPdmdv5r3vvHn3douiKAZhC27gGJagp6bg3xYPjNdhFJKbdm4LMOM3fjuA+ZQqjroIMEJ0vYU2DEOjpjP/H8h3/8L8PZhtUoXO3BfY/v2LNVewCirkKFtjtR2gyviZ9dswU1eFqv0VqgQtm/uJj3NYgT6oZKr2Mqd1nz3ibxMmQ1XMNSzACP/A7ymo2L2mv5pZmOLqbXDtxALMptTgdqFlF4qazBOMQy9sZ8CKoiqeggXreaphq7/E8z7PlKpe2J0riDqcOa8U13f8n8GYS4Daa2hgZVG1VAVX3M5z9Xa11xARdiF3nITclNWA1qkYD0McpJwz/SfEl4WoDPg2oELJKmA5twClV2+1blmIOgJXERLz1xRYr+msNkF0NQ5XFqIyELqzk9wCFnMLUKbuHSKijsBXhApsTG/JrDZCdPvLWcUZZVUyoOB2Fi6jorPY/iLy+btmgs58CC5gA/TVW9t+ANEvNpCGLVB8AAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+	</style>
+	<use id="CustomCursor" href="#img1" transform="matrix(.812,0,0,.812,3,3)"/>
+</svg>

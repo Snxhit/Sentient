@@ -8,14 +8,21 @@ export function renderTiles(ctx, world, camera) {
 
       const tile = world.getTile(x, y);
 
-      if (tile.solid) {
-        ctx.fillStyle = "#6d4c41";
-      } else {
-        ctx.fillStyle = "#87ceeb";
-      }
-
-      if (tile.resource == "food") {
-        ctx.fillStyle = "#03bf03";
+      switch (tile.terrain) {
+        case "dirt":
+          ctx.fillStyle = "#6d4c41";
+          break;
+        case "water":
+          ctx.fillStyle = "#0e87cc";
+          break;
+        default:
+          switch (tile.resource) {
+            case "food":
+              ctx.fillStyle = "#03bf03";
+              break;
+            default:
+              ctx.fillStyle = "#87ceeb";
+          }
       }
 
       ctx.fillRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
