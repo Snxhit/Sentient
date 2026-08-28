@@ -82,6 +82,10 @@ document.getElementById("humanBrush").addEventListener("click", () => {
   activeBrush = "human";
 });
 
+document.getElementById("entitiesCategory").addEventListener("click", () => {
+  document.getElementById("entitiesPanel").classList.toggle("open");
+})
+
 document.getElementById("pauseButton").addEventListener("click", () => {
   timeSetting = "paused";
   document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";

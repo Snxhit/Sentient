@@ -71,6 +71,32 @@ body
   transform: scale(1.05) translate(0, -4px) rotate(-10deg);
 }
 
+.entityPanel
+{
+  bottom: 84px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.entityPanel.open
+{
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.entItem
+{
+  width: 34px !important;
+  height: 34px !important;
+  flex: 0 0 34px !important;
+}
+
 .timePanel
 {
   display: flex;
