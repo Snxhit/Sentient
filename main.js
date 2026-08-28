@@ -83,10 +83,12 @@ document.getElementById("humanBrush").addEventListener("click", () => {
 });
 
 document.getElementById("entitiesCategory").addEventListener("click", () => {
+  document.getElementById("tilesPanel").classList.remove("open");
   document.getElementById("entitiesPanel").classList.toggle("open");
 });
 
 document.getElementById("tilesCategory").addEventListener("click", () => {
+  document.getElementById("entitiesPanel").classList.remove("open");
   document.getElementById("tilesPanel").classList.toggle("open");
 });
 
