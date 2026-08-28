@@ -27,6 +27,17 @@ let timeSetting = "normal";
 const screenManager = new ScreenManager(sim, container);
 screenManager.init();
 
+const keyboard = new Keyboard();
+keyboard.init();
+const cameraSystem = new CameraSystem(camera, sim);
+
+const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
+world.generate();
+
+const entityManager = new EntityManager(world);
+entityManager.spawn(new Human(10, 10));
+entityManager.spawn(new Cat(20, 10));
+
 sim.addEventListener("click", () => {
   const hovered = getHoveredTile(world, camera, mouse);
 
@@ -54,16 +65,6 @@ sim.addEventListener("mousemove", (e) => {
   mouse.y = e.clientY - rect.top;
 });
 
-const keyboard = new Keyboard();
-keyboard.init();
-const cameraSystem = new CameraSystem(camera, sim);
-
-const world = new World(CONFIG.world.width, CONFIG.world.height, generateTerrain(CONFIG.world.width, CONFIG.world.height));
-world.generate();
-
-const entityManager = new EntityManager(world);
-entityManager.spawn(new Human(10, 10));
-entityManager.spawn(new Cat(20, 10));
 
 document.getElementById("pointerBrush").addEventListener("click", () => {
   activeBrush = "pointer";
