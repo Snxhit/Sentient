@@ -84,7 +84,11 @@ document.getElementById("humanBrush").addEventListener("click", () => {
 
 document.getElementById("entitiesCategory").addEventListener("click", () => {
   document.getElementById("entitiesPanel").classList.toggle("open");
-})
+});
+
+document.getElementById("tilesCategory").addEventListener("click", () => {
+  document.getElementById("tilesPanel").classList.toggle("open");
+});
 
 document.getElementById("pauseButton").addEventListener("click", () => {
   timeSetting = "paused";
