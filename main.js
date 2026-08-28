@@ -141,9 +141,16 @@ function loop() {
   if (keyboard.keys["space"]) {
     if (timeSetting != "paused") {
       timeSetting = "paused";
+      document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+      document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+      document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
       keyboard.keys["space"] = false;
     } else {
       timeSetting = "normal";
+      CONFIG.simulation.tickRate = 300;
+      document.getElementById("pauseButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
+      document.getElementById("playButton").style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+      document.getElementById("twoXButton").style.backgroundColor = "rgba(255, 255, 255, 0)";
       keyboard.keys["space"] = false;
     }
   }
