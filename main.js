@@ -138,6 +138,15 @@ function loop() {
   const now = Date.now();
 
   cameraSystem.move(keyboard.keys);
+  if (keyboard.keys["space"]) {
+    if (timeSetting != "paused") {
+      timeSetting = "paused";
+      keyboard.keys["space"] = false;
+    } else {
+      timeSetting = "normal";
+      keyboard.keys["space"] = false;
+    }
+  }
 
   if (now - lastTick > CONFIG.simulation.tickRate) {
     if (timeSetting != "paused") {
