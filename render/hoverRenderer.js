@@ -19,23 +19,23 @@ export function renderHover(ctx, world, entityManager, camera, mouse, activeBrus
 }
 
 function renderBrushBorders(ctx, world, activeBrush, screenX, screenY) {
+    let hFactor = 1;
     if (activeBrush == "pointer") {
         ctx.strokeStyle = "yellow";
-        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "food") {
         ctx.strokeStyle = "green";
-        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "dirt") {
         ctx.strokeStyle = "#573a30";
-        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
+    } else if (activeBrush == "water") {
+        ctx.strokeStyle = "#0e87cc";
     } else if (activeBrush == "eraser") {
         ctx.strokeStyle = "black";
-        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize);
     } else if (activeBrush == "human") {
         ctx.strokeStyle = "#f5c6a5";
         ctx.lineWidth = 2;
-        ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize * 2);
+        hFactor = 2;
     }
+    ctx.strokeRect(screenX, screenY, CONFIG.world.tileSize, CONFIG.world.tileSize * hFactor);
 }
 
 function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim) {
