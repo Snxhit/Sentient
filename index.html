@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -11,26 +12,57 @@
     </div>
     <div id="tooltip"></div>
     <div class="brushPanel entityPanel" id="entitiesPanel">
-      <input type="image" src="./public/brushes/HumanBrush.png" class="brushItem entItem" id="humanBrush">
-      <input type="image" src="./public/brushes/HumanBrush.png" class="brushItem entItem" id="humanBrush">
+      <div class="button-wrapper">
+        <span class="mini-popup">Spawn Human</span>
+        <input type="image" src="./public/brushes/HumanBrush.png" class="brushItem entItem" id="humanBrush">
+      </div>
     </div>
     <div class="brushPanel tilePanel" id="tilesPanel">
-      <input type="image" src="./public/brushes/DirtBrush.png" class="brushItem tileItem" id="dirtBrush">
-      <input type="image" src="./public/brushes/WaterBrush.png" class="brushItem tileItem" id="waterBrush">
+      <div class="button-wrapper">
+        <span class="mini-popup">Draw Dirt</span>
+        <input type="image" src="./public/brushes/DirtBrush.png" class="brushItem tileItem" id="dirtBrush">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Draw Water</span>
+        <input type="image" src="./public/brushes/WaterBrush.png" class="brushItem tileItem" id="waterBrush">
+      </div>
     </div>
     <div class="brushPanel" id="brushPanel">
-      <input type="image" src="./public/brushes/PointerBrush1.png" class="brushItem" id="pointerBrush">
-      <input type="image" src="./public/brushes/EraserBrush.png" class="brushItem" id="eraserBrush">
-      <input type="image" src="./public/categories/SpawnEntities.png" class="brushItem" id="entitiesCategory">
-      <input type="image" src="./public/categories/DrawTiles.png" class="brushItem" id="tilesCategory">
-      <input type="image" src="./public/brushes/FoodBrush1.png" class="brushItem" id="foodBrush">
+      <div class="button-wrapper">
+        <span class="mini-popup">Pointer</span>
+        <input type="image" src="./public/brushes/PointerBrush1.png" class="brushItem" id="pointerBrush">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Erase a Tile</span>
+        <input type="image" src="./public/brushes/EraserBrush.png" class="brushItem" id="eraserBrush">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Open Entity Panel</span>
+        <input type="image" src="./public/categories/SpawnEntities.png" class="brushItem" id="entitiesCategory">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Open Tiles Panel</span>
+        <input type="image" src="./public/categories/DrawTiles.png" class="brushItem" id="tilesCategory">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Spawn Food</span>
+        <input type="image" src="./public/brushes/FoodBrush1.png" class="brushItem" id="foodBrush">
+      </div>
     </div>
     <div class="timePanel" id="timePanel">
-      <input type="image" src="./public/ui_controls/PauseButton.png" class="timeItem" id="pauseButton">
-      <input type="image" src="./public/ui_controls/PlayButton.png" class="timeItem" id="playButton">
-      <input type="image" src="./public/ui_controls/TwoXButton.png" class="timeItem" id="twoXButton">
+      <div class="button-wrapper">
+        <span class="mini-popup">Pause Simulation</span>
+        <input type="image" src="./public/ui_controls/PauseButton.png" class="timeItem" id="pauseButton">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">Play Simulation</span>
+        <input type="image" src="./public/ui_controls/PlayButton.png" class="timeItem" id="playButton">
+      </div>
+      <div class="button-wrapper">
+        <span class="mini-popup">2x Speed</span>
+        <input type="image" src="./public/ui_controls/TwoXButton.png" class="timeItem" id="twoXButton">
+      </div>
     </div>
-
     <script type="module" src="main.js"></script>
   </body>
 </html>
