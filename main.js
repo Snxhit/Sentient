@@ -131,9 +131,16 @@ function simulate() {
       const below = world.getTile(x, y + 1);
 
       if (current.resource === "food") {
-        if (below.terrain !== "dirt" && below.resource !== "food") {
+        if (below.terrain == "air" && below.resource == null) {
           current.resource = null;
           below.resource = "food";
+        }
+      }
+
+      if (current.terrain === "water") {
+        if (below.terrain == "air") {
+          current.terrain = "air";
+          below.terrain = "water";
         }
       }
     }
