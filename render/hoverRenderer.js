@@ -1,5 +1,5 @@
 import CONFIG from "../core/config.js";
-import { getHoveredTile, getHumanTile } from "./helpers.js";
+import { getHoveredTile } from "./helpers.js";
 
 export function renderHover(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim) {
   const hovered = getHoveredTile(world, camera, mouse);
