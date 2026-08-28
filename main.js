@@ -1,3 +1,4 @@
+import ScreenManager from "./core/screenManager.js";
 import CONFIG from "./core/config.js";
 
 import { Keyboard } from "./input/keyboard.js";
@@ -20,20 +21,11 @@ const ctx = sim.getContext("2d");
 const container = document.getElementById("container");
 const tooltip = document.getElementById("tooltip");
 
-document.addEventListener("DOMContentLoaded", () => {
-  sim.focus();
-});
-
-function resizeCanvas() {
-  sim.width = container.clientWidth;
-  sim.height = container.clientHeight;
-}
-
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
 let activeBrush = "pointer";
 let timeSetting = "normal";
+
+const screenManager = new ScreenManager(sim, container);
+screenManager.init();
 
 sim.addEventListener("click", () => {
   const hovered = getHoveredTile(world, camera, mouse);
