@@ -48,9 +48,9 @@ function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim)
       tooltip.style.top = rect.top + mouse.y + 5 + "px";
 
       const t = hovered.tile;
-      const h = getHumanTile(hovered.x, hovered.y, entityManager);
+      const result = entityManager.getEntitiesAtTile(hovered.x, hovered.y);
 
-      if (h) {
+      if (result.hasEntities) {
         tooltip.innerHTML = `Human at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${h.health}<br>Satiety: ${h.satiety}`;
       } else {
         tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
