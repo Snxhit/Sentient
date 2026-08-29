@@ -2,6 +2,10 @@ import CONFIG from "../core/config.js";
 import { getHoveredTile } from "./helpers.js";
 
 export function renderHover(ctx, world, entityManager, camera, mouse, activeBrush, tooltip, sim) {
+  if (!tooltip.isInSim) {
+    tooltip.hide();
+    return;
+  }
   const hovered = getHoveredTile(world, camera, mouse);
 
   if (hovered) {
@@ -10,15 +14,15 @@ export function renderHover(ctx, world, entityManager, camera, mouse, activeBrus
 
     ctx.lineWidth = 2;
 
-    renderBrushBorders(ctx, world, activeBrush, screenX, screenY);
+    renderBrushBorders(ctx, world, tooltip, activeBrush, screenX, screenY);
     renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim);
 
   } else {
-    tooltip.style.display = "none";
+    tooltip.hide();
   }
 }
 
-function renderBrushBorders(ctx, world, activeBrush, screenX, screenY) {
+function renderBrushBorders(ctx, world, tooltip, activeBrush, screenX, screenY) {
     let hFactor = 1;
     if (activeBrush == "pointer") {
         ctx.strokeStyle = "yellow";

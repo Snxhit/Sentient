@@ -2,12 +2,14 @@ export class Tooltip {
     constructor(element) {
         this.element = element;
         this.visible = false;
+        this.isInSim = true;
     }
 
     show() {
         if (!this.visible) {
             this.element.style.display = "block";
             this.visible = true;
+            this.isInSim = true;
         }
     }
 
@@ -15,6 +17,7 @@ export class Tooltip {
         if (this.visible) {
             this.element.style.display = "none";
             this.visible = false;
+            this.isInSim = false;
         }
     }
 

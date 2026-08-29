@@ -69,6 +69,14 @@ sim.addEventListener("click", () => {
   };
 });
 
+sim.addEventListener("mouseleave", () => {
+  tooltip.hide();
+});
+
+sim.addEventListener("mouseenter", () => {
+  tooltip.show();
+});
+
 document.getElementById("pointerBrush").addEventListener("click", () => {
   activeBrush = "pointer";
 });
