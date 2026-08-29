@@ -58,7 +58,7 @@ export class Human extends Entity {
     }
 
     if (this.onGround) {
-      const foodTarget = findNearestFoodTile(this.x, this.y, CONFIG.entities.foodSmellRange);
+      const foodTarget = findNearestFoodTile(world, this.x, this.y, CONFIG.entities.foodSmellRange);
 
       if (foodTarget) {
         const dx = foodTarget.x - this.x;
@@ -75,11 +75,23 @@ export class Human extends Entity {
           this.y -= 1;
           this.x += this.moveDir;
         }
+//
+        const fx = foodTarget.x;
+        const fy = foodTarget.y;
+        const left = Math.floor(this.x);
+        const right = Math.ceil(this.x + this.width) - 1;
+        const top = Math.floor(this.y);
+        const bottom = Math.ceil(this.y + this.height) - 1;
+        const touching =
+          fx >= left && fx <= right && fy >= top && fy <= bottom ||
+          (fx == left - 1 || fx == right + 1) && fy >= top && fy <= bottom ||
+          (fy == top - 1 || fy == bottom + 1) && fx >= left && fx <= right;
 
-        if (newX == foodTarget.x) {
-          world.getTile(foodTarget.x, foodTarget.y).resource = null;
+        if (touching) {
+          world.getTile(fx, fy).resource = null;
           this.satiety += 10;
         }
+//
       } else {
         if (this.moveTime <= 0) {
           let r = Math.random();
