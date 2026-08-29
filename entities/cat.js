@@ -3,7 +3,7 @@ import { collidesAt } from "../world/collision.js";
 import CONFIG from "../core/config.js";
 import { findNearestFoodTile } from "../world/food.js";
 
-const SOUNDS = ["Meow", "Purr", "Mew", "Hiss", "Mrrp", "Prrr", "Nya", "Meh"];
+const SOUNDS = ["Meow", "Purr", "Mew", "Mrrp", "Prrr", "Nyaa~"];
 
 export class Cat extends Entity {
   constructor(x, y, config = {}) {
