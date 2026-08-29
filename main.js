@@ -5,6 +5,8 @@ import { Keyboard } from "./input/keyboard.js";
 import { CameraSystem } from "./input/cameraSystem.js";
 import { MouseManager } from "./input/mouseManager.js";
 
+
+import { Tooltip } from "./render/tooltip.js";
 import { render } from "./render/renderer.js";
 import { getHoveredTile } from "./render/helpers.js";
 
@@ -19,7 +21,9 @@ const sim = document.getElementById("sim");
 const ctx = sim.getContext("2d");
 
 const container = document.getElementById("container");
-const tooltip = document.getElementById("tooltip");
+const tooltipElement = document.getElementById("tooltip");
+
+const tooltip = new Tooltip(tooltipElement);
 
 let activeBrush = "pointer";
 let timeSetting = "normal";

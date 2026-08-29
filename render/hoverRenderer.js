@@ -40,12 +40,11 @@ function renderBrushBorders(ctx, world, activeBrush, screenX, screenY) {
 
 function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim) {
     if (activeBrush == "pointer") {
-      tooltip.style.display = "block";
+      tooltip.show();
 
       const rect = sim.getBoundingClientRect();
 
-      tooltip.style.left = rect.left + mouse.x + 5 + "px";
-      tooltip.style.top = rect.top + mouse.y + 5 + "px";
+      tooltip.updateFrame(mouse.x, mouse.y, rect);
 
       const t = hovered.tile;
       const result = entityManager.getEntitiesAtTile(hovered.x, hovered.y);
@@ -53,11 +52,11 @@ function renderTooltip(mouse, entityManager, activeBrush, hovered, tooltip, sim)
       if (result.hasEntities) {
         const pEntity = result.list[0];
         const typeName = pEntity.constructor.name;
-        tooltip.innerHTML = `${typeName} at (${hovered.x}, ${hovered.y}) rn.<br>Health: ${pEntity.health}<br>Satiety: ${pEntity.satiety}`;
+        tooltip.setEntityInfo(hovered.x, hovered.y, pEntity);
       } else {
-        tooltip.innerHTML = `We at (${hovered.x}, ${hovered.y}) rn.`;
+        tooltip.setTileInfo(hovered.x, hovered.y, t);
       }
     } else {
-      tooltip.style.display = "none";
+      tooltip.hide();
     }
 }
