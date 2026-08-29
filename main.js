@@ -1,5 +1,6 @@
 import ScreenManager from "./core/screenManager.js";
 import CONFIG from "./core/config.js";
+import { initFeaturesPopup } from "./core/featuresPopup.js";
 
 import { Keyboard } from "./input/keyboard.js";
 import { CameraSystem } from "./input/cameraSystem.js";
@@ -35,6 +36,8 @@ const keyboard = new Keyboard();
 keyboard.init();
 const mouseManager = new MouseManager(sim);
 mouseManager.init();
+
+initFeaturesPopup();
 
 const cameraSystem = new CameraSystem(sim);
 
