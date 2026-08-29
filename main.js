@@ -74,7 +74,7 @@ sim.addEventListener("mouseleave", () => {
 });
 
 sim.addEventListener("mouseenter", () => {
-  tooltip.show();
+  tooltip.isInSim = true;
 });
 
 document.getElementById("pointerBrush").addEventListener("click", () => {
