@@ -1,3 +1,9 @@
+@font-face
+{
+  font-family: "Do Hyeon";
+  src: url("./public/fonts/DoHyeon.ttf") format("truetype");
+}
+
 body
 {
   margin: 0;

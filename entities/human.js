@@ -3,6 +3,8 @@ import { collidesAt } from "../world/collision.js";
 import CONFIG from "../core/config.js";
 import { findNearestFoodTile } from "../world/food.js";
 
+const SOUNDS = ["Hello", "Hi", "Hey", "Ooga", "Booga", "Grr", "Hmm", "Yum", "Move", "Huh"];
+
 export class Human extends Entity {
   constructor(x, y, config = {}) {
     super(x, y, {
@@ -15,9 +17,21 @@ export class Human extends Entity {
 
     this.health = config.health ?? 10;
     this.satiety = config.satiety ?? 100;
+    this.talk = null;
+    this.talkTimer = 0;
   }
 
   simulate(world) {
+    if (this.talk) {
+      this.talkTimer -= 1;
+      if (this.talkTimer <= 0) {
+        this.talk = null;
+      }
+    } else if (Math.random() < 0.01) {
+      this.talk = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
+      this.talkTimer = 10;
+    }
+
     if (this.satiety > 0) {
       this.satiety -= 4;
     } else if (this.satiety <= 0) {
