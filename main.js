@@ -65,6 +65,8 @@ sim.addEventListener("click", () => {
       world.getTile(hovered.x, hovered.y).resource = null;
     } else if (activeBrush == "human") {
       entityManager.spawn(new Human(hovered.x, hovered.y));
+    } else if (activeBrush == "cat") {
+      entityManager.spawn(new Cat(hovered.x, hovered.y));
     }
   };
 });
@@ -99,6 +101,10 @@ document.getElementById("eraserBrush").addEventListener("click", () => {
 
 document.getElementById("humanBrush").addEventListener("click", () => {
   activeBrush = "human";
+});
+
+document.getElementById("catBrush").addEventListener("click", () => {
+  activeBrush = "cat";
 });
 
 document.getElementById("entitiesCategory").addEventListener("click", () => {
